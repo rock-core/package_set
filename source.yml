@@ -84,7 +84,7 @@ version_control:
         update_cached_file: false
 
     - bundles/.*:
-        github: rock-rock/bundles-$PACKAGE_BASENAME.git
+        github: rock-core/bundles-$PACKAGE_BASENAME.git
         branch: $ROCK_FLAVOR
 
 overrides:
