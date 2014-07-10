@@ -148,3 +148,11 @@ jpeg:
 
 bundler: gem
 cucumber: gem
+
+grape: gem
+thin: gem
+rack: gem
+rack-test: gem
+multi_json: gem
+faye-websocket: gem
+
