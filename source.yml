@@ -77,11 +77,9 @@ version_control:
       type: archive
       url: http://www.sintef.no/upload/IKT/9011/geometri/sisl/sisl-4.5.0.tar.gz
       update_cached_file: false
-
     - external/opencv:
-        type: archive
-        url: http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.3/OpenCV-2.3.0.tar.bz2
-        update_cached_file: false
+        github: Itseez/opencv.git
+        branch: 2.4
 
     - bundles/.*:
         github: rock-core/bundles-$PACKAGE_BASENAME.git
