@@ -125,3 +125,6 @@ cucumber: gem
 
 poco:
     debian,ubuntu: libpoco-dev
+
+thor:
+    debian,ubuntu: ruby-thor
