@@ -138,4 +138,5 @@ sprockets: gem
 
 thor:
     debian,ubuntu: ruby-thor
-
+    default:
+        gem: thor
