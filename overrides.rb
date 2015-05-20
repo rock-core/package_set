@@ -87,8 +87,8 @@ Autoproj.manifest.each_autobuild_package do |pkg|
     if pkg.name != "tools/logger" && pkg.name != "base/orogen/types" && pkg.name != 'base/orogen/std'
         pkg.optional_dependency 'tools/logger'
     end
-
-    if Rock.flavors.current_flavor.name == 'master'
+                                                       #ugly but we hav eno other way if we build a RC
+    if Rock.flavors.current_flavor.name == 'master' && package('base/orogen/std').importer.branch != 'rock-rc' 
         pkg.orogen_options << '--extensions=metadata_support'
         pkg.depends_on 'tools/orogen_metadata'
     end

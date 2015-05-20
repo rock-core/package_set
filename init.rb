@@ -45,7 +45,7 @@ configuration_option('ROCK_SELECTED_FLAVOR', 'string',
     :possible_values => ['stable', 'master', ROCK_LATEST_RELEASE],
     :doc => [
         "Which flavor of Rock do you want to use ?",
-        "Use 'stable' to use the a released version of Rock that gets updated with bugfixes", "'master' for the development branch", "Or #{ROCK_LATEST_RELEASE} to get a frozen version of the last Rock release", "See http://rock-robotics.org/stable/documentation/installation.html for more information"])
+        "Use 'stable' to use the a released version of Rock that gets updated with bugfixes", "'master' for the development branch", "Or #{ROCK_LATEST_RELEASE} to get a frozen version of the last Rock release", "If you are going to use a release or this is a release select the stable flavor","To switch to a release, refer 'rock-release help'","See http://rock-robotics.org/stable/documentation/installation.html for more information"])
 
 Rock.flavors.select_current_flavor_by_name(
     ENV['ROCK_FORCE_FLAVOR'] || user_config('ROCK_SELECTED_FLAVOR'))
