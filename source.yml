@@ -58,19 +58,6 @@ version_control:
       github: doudou/rubigen
       branch: master
 
-    - base/orogen/interfaces:
-      gitorious: rock-toolchain/orogen-base-interfaces
-      branch: $ROCK_BRANCH
-    - tools/port_proxy:
-      gitorious: rock-toolchain/orogen-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
-    - tools/orogen_ros:
-      gitorious: rock-ros/orogen_ros
-      branch: $ROCK_BRANCH
-    - base/templates/doc:
-      gitorious: rock/doc_preview
-      branch: $ROCK_BRANCH
-
     - bundles/.*:
       github: rock-core/bundles-$PACKAGE_BASENAME.git
       branch: $ROCK_BRANCH
