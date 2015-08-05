@@ -68,7 +68,7 @@ version_control:
       gitorious: rock-ros/orogen_ros
       branch: $ROCK_BRANCH
     - base/templates/doc:
-      gitorious: rock/doc_preview
+      github: rock-core/base-templates-doc_preview
       branch: $ROCK_BRANCH
 
     - bundles/.*:
