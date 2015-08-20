@@ -180,3 +180,4 @@ concurrent-ruby:
     - concurrent-ruby-ext
 rb-readline: gem
 
+hooks: gem
