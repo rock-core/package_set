@@ -198,3 +198,5 @@ pastel:
     gem:
         - pastel<0.6
 
+rgl: gem
+autorespawn: gem
