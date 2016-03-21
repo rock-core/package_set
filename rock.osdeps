@@ -60,7 +60,12 @@ webgen:
         - cmdparse<3.0
 coderay: gem
 kramdown: gem
-hoe: gem
+hoe: 
+    ubuntu:
+      '14.04,14.10,15.04': ruby-hoe
+      default: gem
+    default: gem
+
 yard: gem
 hoe-yard: gem
 rice:
