@@ -64,6 +64,9 @@ hoe:
     ubuntu:
       '14.04,14.10,15.04': ruby-hoe
       default: gem
+    debian:
+      'jessie': ruby-hoe
+      default: gem
     default: gem
 
 yard: gem
