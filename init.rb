@@ -35,6 +35,18 @@ Rock.flavors.define 'stable'
 Rock.flavors.alias 'stable', 'next'
 Rock.flavors.define 'master', :implicit => true
 
+def add_compiler_flag(varName, value)
+    curVal = Autobuild.env_value(varName)
+    if(curVal)
+        curVal = curVal.join(' ')
+        if(!curVal.include?(value))
+            value.concat(' ')
+            value.concat(curVal)
+        end
+    end
+    Autobuild.env_set(varName, value) 
+end
+
 configuration_option('ROCK_SELECTED_FLAVOR', 'string',
     :default => 'stable',
     :possible_values => ['stable', 'master'],
@@ -47,6 +59,14 @@ Rock.flavors.select_current_flavor_by_name(
     ENV['ROCK_FORCE_FLAVOR'] || Autoproj.config.get('ROCK_SELECTED_FLAVOR'))
 
 current_flavor = Rock.flavors.current_flavor
+
+Autoproj.configuration_option 'cxx11', 'boolean',
+:default => 'yes',
+:doc => ["Compile with Cxx11 ? [yes/no]"]
+
+if (Autoproj.user_config('cxx11')) then
+    add_compiler_flag('CXXFLAGS', "-std=c++11")
+end
 
 #This check is needed because the overrides file will override the FLAVOR selection.
 #Furthermore a selection != stable can cause a inconsistent layout (cause by in_flavor system in the package_sets)
