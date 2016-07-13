@@ -114,4 +114,11 @@ Autoproj.post_import do |pkg|
    end
 end
 
+if Autoproj.user_config 'cxx11'
+    Autoproj.post_import do |pkg|
+        if pkg.kind_of?(Autobuild::CMake)
+            pkg.define "ROCK_USE_CXX11", "TRUE"
+        end
+    end
+end
 
