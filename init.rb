@@ -12,7 +12,6 @@ ignore(/\.sw?$/)
 # Ignore the numerous backup files
 ignore(/~$/)
 
-
 # Ruby 1.8 is completly outdated, if you modify this, take respect to the addition checks below against 1.9 
 if defined?(RUBY_VERSION) && (RUBY_VERSION =~ /^1\.8\./)
     Autoproj.error "Ruby 1.8 is not supported by Rock anymore"
@@ -35,6 +34,18 @@ Rock.flavors.define 'stable'
 Rock.flavors.alias 'stable', 'next'
 Rock.flavors.define 'master', :implicit => true
 
+def add_compiler_flag(var_name, value)
+    cur_val = Autobuild.env_value var_name
+    if cur_val
+        cur_val = cur_val.join ' '
+        if !cur_val.include? value
+            value.concat ' '
+            value.concat cur_val
+        end
+    end
+    Autobuild.env_set var_name, value
+end
+
 configuration_option('ROCK_SELECTED_FLAVOR', 'string',
     :default => 'stable',
     :possible_values => ['stable', 'master'],
@@ -47,6 +58,14 @@ Rock.flavors.select_current_flavor_by_name(
     ENV['ROCK_FORCE_FLAVOR'] || Autoproj.config.get('ROCK_SELECTED_FLAVOR'))
 
 current_flavor = Rock.flavors.current_flavor
+
+Autoproj.configuration_option 'cxx11', 'boolean',
+:default => 'yes',
+:doc => ["Compile with Cxx11 ? [yes/no]"]
+
+if Autoproj.user_config 'cxx11'
+    add_compiler_flag 'CXXFLAGS', "-std=c++11"
+end
 
 #This check is needed because the overrides file will override the FLAVOR selection.
 #Furthermore a selection != stable can cause a inconsistent layout (cause by in_flavor system in the package_sets)
