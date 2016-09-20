@@ -1,3 +1,15 @@
 
 rake-compiler: gem
 
+thin:
+    gem: 
+        - rack<1.6.5
+        - thin<=1.7.0
+sprockets:
+    gem: 
+        - rack<1.6.5
+        - sprockets<=3.6.1
+grape:
+    gem: 
+        - rack<1.6.5
+        - grape<=0.16.2
