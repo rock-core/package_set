@@ -77,9 +77,13 @@ Autoproj.manifest.each_autobuild_package do |pkg|
     when Autobuild::CMake
         pkg.post_import do
             Rock.update_cmake_build_type_from_tags(pkg)
+            if File.directory?(File.join(pkg.srcdir, 'viz'))
+                pkg.env_add_path 'VIZKIT_PLUGIN_RUBY_PATH', File.join(pkg.prefix, 'lib')
+            end
         end
         pkg.define "ROCK_TEST_ENABLED", pkg.test_utility.enabled?
         pkg.define "CMAKE_EXPORT_COMPILE_COMMANDS", "ON"
+        pkg.env_add_path 'QT_PLUGIN_PATH', File.join(pkg.prefix, 'lib', 'qt')
         setup_package(pkg.name) do
             pkg.define 'ROCK_TEST_LOG_DIR', pkg.test_utility.source_dir
         end
