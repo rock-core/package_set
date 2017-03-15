@@ -81,7 +81,7 @@ qwt5:
 vtk-qt4:
     ubuntu:
       default: nonexistent
-      '14.04,14.10,15.04,15.10': libvtk5-qt4-dev
+      '14.04,14.10,15.04,15.10,16.04': libvtk5-qt4-dev
     debian:
       'wheezy,jessie': libvtk5-qt4-dev
       default: nonexistent
