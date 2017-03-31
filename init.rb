@@ -48,6 +48,18 @@ Rock.flavors.select_current_flavor_by_name(
 
 current_flavor = Rock.flavors.current_flavor
 
+#The following option is used to determine which xml importer should be used.
+#Currently castxml is working
+
+configuration_option('TYPELIB_CXX_LOADER', 'string',
+    :default => 'castxml',
+    :possible_values => ['gccxml', 'castxml'],
+    :doc => [
+        "Which xml importer should be used?",
+        "Currently only castxml is working when using master flavor"])
+
+Autoproj.env_set 'TYPELIB_CXX_LOADER', Autoproj.config.get('TYPELIB_CXX_LOADER')
+
 #This check is needed because the overrides file will override the FLAVOR selection.
 #Furthermore a selection != stable can cause a inconsistent layout (cause by in_flavor system in the package_sets)
 if File.exists?(File.join(Autoproj.root_dir, "autoproj", "overrides.d", "25-release.yml")) && current_flavor.branch != "stable" 
