@@ -69,7 +69,9 @@ rice:
     default:
         gem: rice
         # Note: autoconf is an osdep built-in autoproj
-        osdep: autotools
+        osdep:       
+            default: nonexistent
+            '14.04,14.10,15.04,15.10': autotools
 
 qwt5:
     debian,ubuntu: libqwt5-qt4-dev
