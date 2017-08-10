@@ -13,5 +13,5 @@ end
 
 cmake_package 'gui/rock_webapp'
 ruby_package 'tools/rest_api' do |pkg|
-    Autoproj.env_set 'ROCK_WEBAPP', File.join(pkg.prefix, 'share', 'rest_api')
+    Autoproj.env_set 'ROCK_WEBAPP', File.join(Autobuild.prefix, 'share', 'rest_api')
 end
