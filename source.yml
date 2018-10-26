@@ -84,6 +84,10 @@ version_control:
       branch: indigo-devel
       tag: 0.3.8
 
+    - tools/msgpack-c:
+      github: msgpack/msgpack-c
+      tag: cpp-3.1.1
+
 overrides:
     - ^(orogen|typelib|rtt|utilrb|utilmm|rtt_typelib|tools/metaruby)$:
       branch: $ROCK_BRANCH

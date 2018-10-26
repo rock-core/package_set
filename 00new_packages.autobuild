@@ -4,6 +4,9 @@
 ruby_package 'tools/apaka'
 remove_from_default 'tools/apaka'
 
+cmake_package 'tools/msgpack-c'
+cmake_package 'tools/pocolog2msgpack'
+
 cmake_package 'gui/osgviz'
 
 cmake_package 'base/logging'
