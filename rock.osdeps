@@ -251,3 +251,18 @@ ruby-backports:
 ruby-xmlrpc:
    gem: xmlrpc
 
+python:
+    debian,ubuntu: python
+    opensuse: python
+
+python-nose:
+    debian,ubuntu: python-nose
+    opensuse: python-nose
+
+python-pexpect:
+    debian,ubuntu: python-pexpect
+    opensuse: python-pexpect
+
+python-msgpack:
+    debian,ubuntu: python-msgpack
+    opensuse: python-msgpack
