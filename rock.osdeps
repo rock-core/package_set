@@ -253,7 +253,7 @@ ruby-xmlrpc:
 
 python:
     debian,ubuntu: python-dev
-    opensuse: python
+    opensuse: python-devel
 
 python-nose:
     debian,ubuntu: python-nose
