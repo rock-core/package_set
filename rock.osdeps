@@ -252,7 +252,7 @@ ruby-xmlrpc:
    gem: xmlrpc
 
 python:
-    debian,ubuntu: python
+    debian,ubuntu: python-dev
     opensuse: python
 
 python-nose:
