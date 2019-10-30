@@ -63,7 +63,9 @@ webgen:
         - cmdparse<3.0
 coderay: gem
 kramdown: gem
-hoe: gem
+hoe: 
+    gem:
+        - hoe=3.18.1
 yard: gem
 hoe-yard: gem
 rice:
