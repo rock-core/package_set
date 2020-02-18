@@ -20,7 +20,7 @@ module Rock
     # stub osdep entries in defaults.osdeps
     def self.setup_cxx11_support(os_package_resolver, config)
         config.declare 'cxx11', 'boolean',
-            default: 'no',
+            default: 'yes',
             doc: "whether C++11 should be enabled for Rock packages"
         config.get('cxx11')
 
