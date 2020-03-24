@@ -178,7 +178,7 @@ module Rock
     end
 
     def self.rewrite_python_shims(python_executable, root_dir)
-        shim_path = File.join(root_dir, "install","bin")
+        shim_path = get_python_shim_path(root_dir)
         if !File.exist?(shim_path)
             FileUtils.mkdir_p shim_path
             Autoproj.warn "Rock.rewrite_python_shims: creating "\
@@ -193,16 +193,59 @@ module Rock
         FileUtils.chmod 0755, File.join(shim_path, 'python')
     end
 
+    def self.get_python_shim_path(root_dir)
+        File.join(root_dir, "install","bin")
+    end
+
+    def self.get_python_venv_path(root_dir)
+        File.join(root_dir,".python_venv")
+    end
+
+    def self.create_python_venv(python_executable, root_dir)
+        venv_path = get_python_venv_path(root_dir)
+        cmd = "#{python_executable} -m venv #{venv_path}"\
+            " --system-site-packages"
+        msg, status = Open3.capture2e(cmd)
+        return File.join(venv_path, "bin","activate") if status.success?
+
+        raise RuntimeError, "Rock.create_python_venv: failed to "\
+            " create python virtual environment: #{venv_path}"
+    end
+
+    def self.enable_python_venv(python_executable, python_version, root_dir)
+        venv_path = get_python_venv_path(root_dir)
+        if File.exist?(venv_path)
+            begin
+                # Activate python venv
+                venv_python_bin = File.join(venv_path,"bin","python")
+                return if python_version == get_python_version(venv_python_bin)
+            rescue Exception => e
+                FileUtils.rm_rf(venv_path)
+            end
+        end
+        create_python_venv(python_executable, root_dir)
+    end
+
     # Activate configuration for python in the autoproj configuration
     # @return [String,String] python path and python version
     def self.activate_python(ws: Autoproj.workspace,
                              bin: nil,
                              version: nil)
+        ws.os_package_installer(["python3-dev","python3-pip","python3-venv"])
+
         bin, version = resolve_python(ws: ws, bin: bin, version: version)
         ws.config.set('python_executable', bin, true)
         ws.config.set('python_version', version, true)
 
-        rewrite_python_shims(bin, ws.root_dir)
+        begin
+            # Cleanup potentially remaining shims
+            remove_python_shims(ws.root_dir)
+
+            activate_script = enable_python_venv(bin, version, ws.root_dir)
+            Autoproj.env.source_after(activate_script)
+        rescue RuntimeError => e
+            rewrite_python_shims(bin, ws.root_dir)
+        end
         [bin, version]
     end
 

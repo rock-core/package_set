@@ -8,6 +8,7 @@ module Rock
         before do
             @pkg = Autobuild::Package.new
             @ws = ws_create
+            @ws.setup
             flexmock(@pkg)
             @pkg.prefix = "/tmp/install/foo/"
             @env = flexmock(base: Autobuild::Environment)
@@ -133,8 +134,7 @@ module Rock
             Rock.activate_python(ws: @ws)
             assert(@ws.config.has_value_for?('python_executable'))
             assert(@ws.config.has_value_for?('python_version'))
-
-            python_bin = File.join(@ws.root_dir, "install","bin","python")
+            python_bin = File.join(@ws.root_dir, ".python_venv","bin","python")
             assert(File.exist?(python_bin))
             python_version = Rock.get_python_version(python_bin)
             assert(python_version == @ws.config.get('python_version'))

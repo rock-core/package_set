@@ -288,6 +288,10 @@ python3-msgpack:
     debian,ubuntu: python3-msgpack
     opensuse: python3-msgpack
 
+python3-venv:
+    debian,ubuntu: python3-venv
+    opensuse: python3-virtualenv
+
 cython3:
     debian, ubuntu: cython3
     opensuse: python3-Cython
