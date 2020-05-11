@@ -198,6 +198,15 @@ in_flavor 'master', 'stable' do
     metapackage 'image_processing/jpeg_conversion', 'perception/jpeg_conversion'
 
     cmake_package 'perception/frame_helper' do |pkg|
+        pkg.post_import do
+            begin
+                Utilrb::PkgConfig.get("opencv4")
+                pkg.define "OPENCV4", "ON"
+            rescue Utilrb::PkgConfig::NotFound
+                pkg.define "OPENCV4", "OFF"
+            end
+        end
+
         if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
             pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
         end
