@@ -132,3 +132,10 @@ only_on 'debian' do
     end
 end
 
+if (Autoproj.workspace.operating_system[1] & ['16.04']).any?
+    repository = Autobuild::Package['base/cmake'].importer.repository
+    Autobuild::Package['base/cmake'].importer.relocate(repository, {commit: '63f49ee9cfc5db8ee87cc69f8f3cd3aa6cfc1e0f'})
+    repository = Autobuild::Package['typelib'].importer.repository
+    Autobuild::Package['typelib'].importer.relocate(repository, {commit: 'aa3bd70d2dacede3a5d7833104d79eff3f8550ac'})
+end
+
