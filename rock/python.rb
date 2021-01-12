@@ -204,11 +204,13 @@ module Rock
                 "are you operating on a valid autoproj workspace?"
         end
 
-        File.open(File.join(shim_path, 'python'), 'w') do |io|
+        python_path = File.join(shim_path, 'python')
+        File.open(python_path, 'w') do |io|
             io.puts "#! /bin/sh"
             io.puts "exec #{python_executable} \"$@\""
         end
-        FileUtils.chmod 0755, File.join(shim_path, 'python')
+        FileUtils.chmod 0755, python_path
+        python_path
     end
 
     def self.rewrite_pip_shims(python_executable, root_dir)
@@ -219,12 +221,13 @@ module Rock
                 "#{shim_path} - "\
                 "are you operating on a valid autoproj workspace?"
         end
-
-        File.open(File.join(shim_path, 'pip'), 'w') do |io|
+        pip_path = File.join(shim_path, 'pip')
+        File.open(pip_path, 'w') do |io|
             io.puts "#! /bin/sh"
             io.puts "exec #{python_executable} -m pip \"$@\""
         end
-        FileUtils.chmod 0755, File.join(shim_path, 'pip')
+        FileUtils.chmod 0755, pip_path
+        pip_path
     end
 
     # Activate configuration for python in the autoproj configuration
@@ -238,8 +241,8 @@ module Rock
 
         ws.osdep_suffixes << "python#{$1}" if version =~ /^([0-9]+)\./
 
-        rewrite_python_shims(bin, ws.root_dir)
-        rewrite_pip_shims(bin, ws.root_dir)
+        Autobuild.programs["python"] = rewrite_python_shims(bin, ws.root_dir)
+        Autobuild.programs["pip"] = rewrite_pip_shims(bin, ws.root_dir)
         [bin, version]
     end
 
