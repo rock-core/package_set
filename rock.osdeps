@@ -298,3 +298,11 @@ rubocop-rock: gem
 ruby2_keywords:
     gem:
         - ruby2_keywords=0.0.2
+
+ftpd:
+  gem:
+    - ftpd
+
+net-ftp:
+  gem:
+    - net-ftp
