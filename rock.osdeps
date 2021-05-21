@@ -68,7 +68,7 @@ yard: gem
 hoe-yard: gem
 rice:
     default:
-        gem: rice
+        gem: rice<4.0.0
         # Note: autoconf is an osdep built-in autoproj
         osdep:
         - autotools
