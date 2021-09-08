@@ -200,8 +200,13 @@ thor:
     default: gem
 
 qtruby:
-    default:
-        gem: qtbindings
+    ubuntu:
+        "16.04,18.04":
+            gem: qtbindings
+        default:
+            gem:
+            - name: qtbindings
+              git: https://github.com/rock-core/qtbindings
         osdep: [qt4, qt4-opengl, qt-designer, qt4-webkit, ruby-dev, cmake]
     gentoo:
         kde-base/kdebindings-ruby
