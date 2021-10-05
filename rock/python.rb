@@ -189,15 +189,15 @@ module Rock
             return auto_resolve_python(ws: ws, version: version)
         end
     end
-    def self.remove_python_shims(root_dir)
-        shim_path = File.join(root_dir, "install","bin","python")
+    def self.remove_python_shims(prefix_dir)
+        shim_path = File.join(prefix_dir, "bin", "python")
         if File.exists?(shim_path)
             FileUtils.rm shim_path
         end
     end
 
-    def self.rewrite_python_shims(python_executable, root_dir)
-        shim_path = File.join(root_dir, "install","bin")
+    def self.rewrite_python_shims(python_executable, prefix_dir)
+        shim_path = File.join(prefix_dir, "bin")
         if !File.exist?(shim_path)
             FileUtils.mkdir_p shim_path
             Autoproj.warn "Rock.rewrite_python_shims: creating "\
@@ -214,8 +214,8 @@ module Rock
         python_path
     end
 
-    def self.rewrite_pip_shims(python_executable, root_dir)
-        shim_path = File.join(root_dir, "install","bin")
+    def self.rewrite_pip_shims(python_executable, prefix_dir)
+        shim_path = File.join(prefix_dir, "bin")
         if !File.exist?(shim_path)
             FileUtils.mkdir_p shim_path
             Autoproj.warn "Rock.rewrite_pip_shims: creating "\
@@ -242,13 +242,13 @@ module Rock
 
         ws.osdep_suffixes << "python#{$1}" if version =~ /^([0-9]+)\./
 
-        rewrite_python_shims(bin, ws.root_dir)
-        rewrite_pip_shims(bin, ws.root_dir)
+        rewrite_python_shims(bin, ws.prefix_dir)
+        rewrite_pip_shims(bin, ws.prefix_dir)
         [bin, version]
     end
 
     def self.deactivate_python(ws: Autoproj.workspace)
-        remove_python_shims(ws.root_dir)
+        remove_python_shims(ws.prefix_dir)
         ws.config.reset('python_executable')
         ws.config.reset('python_version')
     end
@@ -284,7 +284,7 @@ module Rock
 
         if ws.config.get("USE_PYTHON")
             if !ws.config.has_value_for?('python_executable')
-                remove_python_shims(ws.root_dir)
+                remove_python_shims(ws.prefix_dir)
                 python_bin,_ = auto_resolve_python(ws: ws)
             end
 
