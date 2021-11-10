@@ -234,7 +234,7 @@ module Rock
     def self.upgrade_pip(ws: Autoproj.workspace)
         python_executable = ws.config.get("python_executable", nil)
         unless python_executable.nil?
-            Open3.popen3("#{python_executable} -m pip install --upgrade pip")
+            Open3.popen3("#{python_executable} -m pip install --upgrade pip setuptools wheel")
         end
     end
 
