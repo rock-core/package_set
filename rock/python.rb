@@ -231,6 +231,13 @@ module Rock
         pip_path
     end
 
+    def self.upgrade_pip(ws: Autoproj.workspace)
+        python_executable = ws.config.get("python_executable", nil)
+        unless python_executable.nil?
+            Open3.popen3("#{python_executable} -m pip install --upgrade pip")
+        end
+    end
+
     # Activate configuration for python in the autoproj configuration
     # @return [String,String] python path and python version
     def self.activate_python(ws: Autoproj.workspace,
@@ -244,6 +251,7 @@ module Rock
 
         rewrite_python_shims(bin, ws.root_dir)
         rewrite_pip_shims(bin, ws.root_dir)
+        upgrade_pip(ws: ws)
         [bin, version]
     end
 
