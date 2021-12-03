@@ -144,6 +144,7 @@ in_flavor 'master', 'stable' do
 
     ruby_package  'tools/orocos.rb' do |pkg|
         pkg.env_set 'ORBInitRef',"NameService=corbaname::127.0.0.1"
+        pkg.rake_test_task = Autoproj.config.get("orocosrb_test_target", "test")
         if pkg.test_utility.enabled? && Autobuild::Orogen.transports.include?('mqueue')
             pkg.env_set 'OROCOSRB_TEST_USE_MQUEUE', '1'
         end
