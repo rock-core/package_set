@@ -94,14 +94,18 @@ overrides:
     - ^(orogen|typelib|rtt|utilrb|utilmm|rtt_typelib|tools/metaruby)$:
       branch: $ROCK_BRANCH
 
-    # pin rtt commit to before the merge of the last major dataflow refactoring
-    #
-    # This refactoring led to massive deadlocking on a lot of dynamic
-    # disconnection scenarios.
-    #
-    # See https://github.com/orocos-toolchain/rtt/pull/302
     - rtt:
       github: rock-core/rtt
+    - orogen:
+      github: rock-core/tools-orogen
+    - typelib:
+      github: rock-core/tools-typelib
+    - utilrb:
+      github: rock-core/tools-utilrb
+    - rtt_typelib:
+      github: rock-core/tools-rtt_typelib
+    - metaruby:
+      github: rock-core/tools-metaruby
     - (ocl|log4cpp):
       branch: master
 
