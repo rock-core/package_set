@@ -22,9 +22,9 @@ if defined?(RUBY_VERSION) && (RUBY_VERSION =~ /^1\.8\./)
     exit 1
 end
 
-require 'autoproj/gitorious'
+require 'autoproj/git_server_configuration'
 if !Autoproj.has_source_handler? 'github'
-    Autoproj.gitorious_server_configuration('GITHUB', 'github.com', :http_url => 'https://github.com')
+    Autoproj.git_server_configuration('GITHUB', 'github.com', :http_url => 'https://github.com', default: 'http,ssh')
 end
 
 require File.join(__dir__, 'rock/flavor_definition')
