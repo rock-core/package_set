@@ -119,6 +119,10 @@ gui/osg_qt4:
         '16.04,18.04,18.10,19.04,19.10':
             osdep: osg
 
+gui/osg_qt5:
+    ubuntu: nonexistent
+    gentoo: dev-games/openscenegraph-qt
+
 qt5:
     # QMake is needed for the CMake macro for Qt4
     debian: [qt5-default, qttools5-dev]
