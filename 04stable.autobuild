@@ -7,7 +7,7 @@ add_packages_to_flavors 'stable' => ['orogen', 'rtt', 'utilmm', 'utilrb', 'typel
 
 in_flavor 'master', 'stable' do
     cmake_package 'gui/vizkit3d' do |pkg|
-        pkg.depends_on "gui/osg_qt4"
+        pkg.depends_on "gui/osg_qt5"
         if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
             pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
         end
