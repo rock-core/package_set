@@ -39,12 +39,13 @@ binding_of_caller:
 activesupport:
   ubuntu: ruby-activesupport
   debian: ruby-activesupport
+  gentoo: dev-ruby/activesupport
   default:
     gem: activesupport
 
 eigen3:
     debian, ubuntu: libeigen3-dev
-    gentoo: dev-cpp/eigen
+    gentoo: dev-cpp/eigen:3
     fedora: eigen3-devel
     arch,manjarolinux: eigen3
     darwin: eigen
@@ -56,6 +57,7 @@ pkg-config:
     fedora,opensuse: pkg-config
     arch,manjarolinux: pkg-config
     darwin: pkg-config
+    gentoo: dev-util/pkgconf
 
 webgen:
     gem:
@@ -105,7 +107,9 @@ freeglut3:
 
 osg:
     debian,ubuntu: libopenscenegraph-dev
-    gentoo: dev-games/openscenegraph
+    gentoo:
+        - dev-games/openscenegraph
+        - dev-games/openscenegraph-qt
     fedora: OpenSceneGraph-devel
     macos-brew: open-scene-graph
     macos-port: OpenSceneGraph
@@ -119,16 +123,35 @@ gui/osg_qt4:
         '16.04,18.04,18.10,19.04,19.10':
             osdep: osg
 
-qt5:
+qt4:
     # QMake is needed for the CMake macro for Qt4
-    debian,ubuntu: [qt5-default, qttools5-dev]
+    debian,ubuntu: [libqt4-dev, qt4-qmake]
     gentoo:
-        - dev-qt/qtcore
-        - dev-qt/qtgui
+        - dev-qt/qtcore:4
+        - dev-qt/qtgui:4
     fedora,opensuse: qt-devel
     macos-brew: qt4
     macos-port: qt4-mac
     arch,manjarolinux: qt4
+
+qt5:
+    # QMake is needed for the CMake macro for Qt4
+    debian,ubuntu: [qt5-default, qttools5-dev]
+    gentoo:
+        - dev-qt/qtcore:4
+        - dev-qt/qtgui:4
+    fedora,opensuse: qt-devel
+    macos-brew: qt4
+    macos-port: qt4-mac
+    arch,manjarolinux: qt4
+
+qt4-opengl:
+    debian,ubuntu: libqt4-opengl-dev
+    gentoo: dev-qt/qtopengl:4
+    fedora,opensuse: qt-devel
+    macos-brew: qt4
+    macos-port: qt4-mac
+    arch: qt4
 
 qt5-opengl:
     debian,ubuntu: libqt5opengl5-dev
@@ -146,7 +169,7 @@ qt4-webkit:
 
 qt-designer:
     debian,ubuntu: qt4-designer
-    gentoo: x11-libs/qt-gui
+    gentoo: dev-qt/designer:4
     fedora,opensuse: qt-devel
     macos-brew: qt4
     macos-port: qt4-mac
@@ -162,6 +185,9 @@ opencv:
     macos-brew: opencv
     macos-port: opencv
     opensuse: opencv-devel
+
+opencv4:
+    gentoo: =media-libs/opencv-4*
 
 jpeg:
     debian,ubuntu: libjpeg-dev
@@ -180,6 +206,7 @@ poco:
     debian,ubuntu: libpoco-dev
     macos-brew: poco
     macos-port: poco
+    gentoo: dev-libs/poco
 
 faye-websocket: gem
 rack-cors: gem
@@ -197,7 +224,20 @@ thor:
     ubuntu:
         precise: gem
         default: ruby-thor
+    gentoo: dev-ruby/thor
     default: gem
+
+qtruby:
+    ubuntu:
+        "16.04,18.04":
+            gem: qtbindings
+        default:
+            gem:
+            - name: qtbindings
+              git: https://github.com/rock-core/qtbindings
+        osdep: [qt4, qt4-opengl, qt-designer, qt4-webkit, ruby-dev, cmake]
+    gentoo:
+        kde-base/kdebindings-ruby
 
 fakefs: gem
 flexmock: gem
@@ -232,8 +272,10 @@ rbtrace: gem
 
 google-test:
     debian,ubuntu: libgtest-dev
+    gentoo: dev-cpp/gtest
 google-mock:
     debian,ubuntu: google-mock
+    gentoo: dev-cpp/gtest
 
 # For backward compatibility with the previous definition in the 'rock' package
 # set
@@ -265,12 +307,14 @@ cdbs:
 
 cmake:
     debian,ubuntu: cmake
+    gentoo: dev-util/cmake
 
 cowbuilder:
     debian,ubuntu: cowbuilder
 
 curl:
     debian,ubuntu: curl
+    gentoo: net-misc/curl
 
 debian-archive-keyring:
     debian,ubuntu: debian-archive-keyring
@@ -283,6 +327,7 @@ gem2deb:
 
 qemu:
     debian,ubuntu: [qemu-user-static, qemubuilder]
+    gentoo: app-emulation/qemu
 
 rubocop:
     gem:
