@@ -130,6 +130,10 @@ qt5:
     macos-port: qt4-mac
     arch,manjarolinux: qt4
 
+qt5-svg:
+    debian,ubuntu: libqt5svg5-dev
+    gentoo: dev-qt/qtsvg    
+
 qt5-opengl:
     debian,ubuntu: libqt5opengl5-dev
     gentoo: dev-qt/qtopengl
