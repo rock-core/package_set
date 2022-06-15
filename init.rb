@@ -12,6 +12,12 @@ ignore(/\.sw?$/)
 # Ignore the numerous backup files
 ignore(/~$/)
 
+## Workaround a change in minitest 1.15 that triggered a weird bug, causing ruby
+## tests to fail with cannot create Thread: reosource temporarily unavailable
+##
+## This seem to be only triggered when tests are run under autoproj (the weird part)
+Autoproj.env_set "MT_CPU", "1"
+
 
 # Ruby 1.8 is completly outdated, if you modify this, take respect to the addition checks below against 1.9 
 if defined?(RUBY_VERSION) && (RUBY_VERSION =~ /^1\.8\./)
