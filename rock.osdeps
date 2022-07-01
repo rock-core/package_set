@@ -195,7 +195,7 @@ qt-designer:
     macos-port: qt4-mac
 
 qt5-designer:
-    debian,ubuntu: qt5-designer
+    debian,ubuntu: qttools5-dev-tools
     gentoo: dev-qt/designer:5
     fedora,opensuse: qt-devel
     macos-brew: qt5
