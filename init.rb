@@ -170,3 +170,14 @@ unless Autoproj.config.has_value_for?('syskit_use_bundles')
     Autoproj.config.set 'syskit_use_bundles', true, true
 end
 
+Autoproj.config.declare 'build_visualization', 'boolean',
+    default: true,
+    short_doc: 'Whether vizkit visualizaztion plugins in "viz" subfolders of packages should be built',
+    doc: ['Should the visualizations be built (viz subfolder of packages)?',
+        'This will also evaluate the manifest.xml in the viz subfolder of a package',
+        'and install them',
+        'These dependencies will appear as dependencies of the main package']
+
+unless Autoproj.config.has_value_for?('build_visualization')
+    Autoproj.config.set 'build_visualization', true, true
+end

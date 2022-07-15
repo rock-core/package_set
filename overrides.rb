@@ -92,6 +92,29 @@ Autoproj.manifest.each_autobuild_package do |pkg|
     end
 
     if pkg.kind_of?(Autobuild::CMake)
+        if File.directory?(File.join(pkg.srcdir, 'viz'))
+            if Autoproj.config.has_value_for?('build_visualization')
+                if Autoproj.config.get 'build_visualization'
+                    pkg.define 'ROCK_VIZ_ENABLED', 'OFF'
+                else
+                    # load manifest.xml from viz folder
+                    viz_manifest_file = File.join(pkg.srcdir, 'viz', 'manifest.xml')
+                    if File.file?(viz_manifest_file)
+                        manifest = Autoproj::PackageManifest.load(pkg, viz_manifest_file, ros_manifest: false)
+                        if manifest
+                            manifest.each_dependency do |name, is_optional|
+                                if is_optional
+                                    pkg.optional_dependency name
+                                else
+                                    pkg.depends_on name
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
         pkg.post_import do
             Rock.update_cmake_build_type_from_tags(pkg)
 
