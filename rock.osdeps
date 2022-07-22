@@ -222,7 +222,9 @@ qtruby:
 
 fakefs: gem
 flexmock: gem
-minitest: gem
+minitest:
+    gem:
+        "minitest < 5.16"
 minitest-junit: gem
 rack-test: gem
 minitest-em-sync: gem
