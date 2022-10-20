@@ -27,7 +27,9 @@ in_flavor 'master' do
     end
     remove_from_default 'tools/oropy_bridge'
 
-    cmake_package 'tools/orogen_opaque_autogen'
+    cmake_package 'tools/orogen_opaque_autogen' do |pkg|
+        pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
+    end
     remove_from_default 'tools/orogen_opaque_autogen'
 end
 
