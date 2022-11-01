@@ -121,7 +121,10 @@ gui/osg_qt4:
 
 qt5:
     # QMake is needed for the CMake macro for Qt4
-    debian,ubuntu: [qt5-default, qttools5-dev]
+    debian: [qt5-default, qttools5-dev]
+    ubuntu:
+        '18.04,20.04': [qt5-default, qttools5-dev]
+        default: [qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev]
     gentoo:
         - dev-qt/qtcore
         - dev-qt/qtgui
