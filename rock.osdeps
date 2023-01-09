@@ -65,7 +65,9 @@ webgen:
         - cmdparse<3.0
 coderay: gem
 kramdown: gem
-hoe: gem
+hoe:
+    gem:
+        - hoe<4.0
 yard: gem
 hoe-yard: gem
 rice:
@@ -79,7 +81,7 @@ rice:
 qwt5:
     debian,ubuntu:
         default: libqwt5-qt4-dev
-        '20.04': nonexistent
+        '20.04,22.04': nonexistent
     fedora,opensuse: qwt-devel
     darwin: qwt
     arch: qwt5
