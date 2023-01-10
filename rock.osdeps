@@ -81,7 +81,7 @@ rice:
 qwt5:
     debian,ubuntu:
         default: libqwt5-qt4-dev
-        '20.04,22.04': nonexistent
+        '20.04': nonexistent
     fedora,opensuse: qwt-devel
     darwin: qwt
     arch: qwt5
@@ -140,7 +140,10 @@ qt4:
 
 qt5:
     # QMake is needed for the CMake macro for Qt5
-    debian,ubuntu: [qt5-default, qttools5-dev]
+    debian: [qt5-default, qttools5-dev]
+    ubuntu:
+        '18.04,20.04': [qt5-default, qttools5-dev]
+        default: [qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev]
     gentoo:
         - dev-qt/qtcore:5
         - dev-qt/qtgui:5
