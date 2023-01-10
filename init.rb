@@ -170,3 +170,53 @@ unless Autoproj.config.has_value_for?('syskit_use_bundles')
     Autoproj.config.set 'syskit_use_bundles', true, true
 end
 
+# Determine the qt default version depending on the distribution version.
+# The default here is 5 as the catch-all, but we actually prefer QT4
+# where available. It just won't be available on anything newer than the
+# versions given here. distributions with rolling releases probably
+# have QT4 removed already.
+os_names, os_versions = Autoproj.workspace.operating_system
+
+qt4_max_versions = [["ubuntu", 18], ["debian", 10], ["fedora", 38], ["opensuse", 15]]
+
+qtdefault = '5'
+qt4_max_versions.each do |(osname,maxversion)|
+    if os_names.include?(osname)
+        os_versions.each do |ver|
+            ver.match /^(\d+)\./ do |m|
+                if m[0].to_i <= maxversion
+                    qtdefault = '4'
+                end
+            end
+            ver.match /^(\d+)$/ do |m|
+                if m[0].to_i <= maxversion
+                    qtdefault = '4'
+                end
+            end
+        end
+    end
+end
+
+# The PPA for Ubuntu 20.04 only has x86_64 versions
+only_on ["ubuntu","20.04"] do
+    if RUBY_PLATFORM.downcase.include?("x86_64")
+        qtdefault = '4'
+    end
+end
+
+# This is a string since the ROS derived condition= attribute of
+# packages manifest.xml <depend> tag only deals in strings. Conversion
+# from int would be automatic, but this way we don't even pretend to be
+# able to do a numeric comparision.
+configuration_option('QTVER', 'string',
+    :default => qtdefault,
+    :possible_values => ['4', '5'],
+    :short_doc => 'Select prefered QT version',
+    :doc => [
+        "Select prefered QT version",
+        "Use '4' if you want to use Rock on distributions where qt4 support",
+        "exists (Ubuntu 16.04 to 18.04, 20.04 x86_64 only).",
+        "Use '5' on newer distributions (Ubuntu 21.04 and later) or",
+        "if you want to use qt5 on your qt5 supporting distribution",
+        "(Ubuntu 18.04 and later). The qt5 support is not as complete as",
+        "the qt4 support, especially lacking any support for gui/vizkit."])
