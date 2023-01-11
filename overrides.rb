@@ -132,3 +132,13 @@ only_on 'debian' do
     end
 end
 
+# select feature/qt5 branches where appropriate
+if Autoproj.config.get('QTVER') == '5'
+    ["gui/vizkit3d","gui/rock_widget_collection","base/types"].each do |pkgname|
+        pkg = Autoproj.manifest.package_definition_by_name(pkgname)
+        # update the vcs information with our branch
+        pkg.vcs = pkg.vcs.update({branch: "feature/qt5"})
+        # recreate the importer with the new information
+        pkg.autobuild.importer = pkg.vcs.create_autobuild_importer
+    end
+end
