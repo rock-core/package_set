@@ -6,6 +6,8 @@ manifest = if Autoproj.respond_to?(:workspace)
 add_packages_to_flavors 'stable' => ['orogen', 'rtt', 'utilmm', 'utilrb', 'typelib', 'rtt_typelib', 'tools/metaruby', 'ocl', 'log4cpp']
 
 in_flavor 'master', 'stable' do
+    ruby_package 'gui/vizkit'
+
     cmake_package 'gui/vizkit3d' do |pkg|
         pkg.depends_on "gui/osg_qt4"
         if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
@@ -142,6 +144,7 @@ in_flavor 'master', 'stable' do
 
     ruby_package  'tools/orocos.rb' do |pkg|
         pkg.env_set 'ORBInitRef',"NameService=corbaname::127.0.0.1"
+        pkg.rake_test_task = Autoproj.config.get("orocosrb_test_target", "test")
         if pkg.test_utility.enabled? && Autobuild::Orogen.transports.include?('mqueue')
             pkg.env_set 'OROCOSRB_TEST_USE_MQUEUE', '1'
         end
