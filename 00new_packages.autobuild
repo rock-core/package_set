@@ -33,3 +33,6 @@ end
 
 cmake_package "gui/osg_qt4"
 remove_from_default "gui/osg_qt4"
+
+cmake_package "gui/osg_qt5"
+remove_from_default "gui/osg_qt5"

@@ -46,6 +46,10 @@ version_control:
     - gui/qtpropertybrowser:
       github: abhijitkundu/QtPropertyBrowser
 
+    - gui/osg_qt5:
+      github: rock-core/gui-osg_qt4
+      branch: feature/qt5
+
     - drivers/orogen/.*:
       github: rock-core/drivers-orogen-$PACKAGE_BASENAME
       branch: $ROCK_BRANCH
