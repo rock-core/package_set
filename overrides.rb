@@ -95,7 +95,7 @@ Autoproj.manifest.each_autobuild_package do |pkg|
             if File.directory?(File.join(pkg.srcdir, 'viz'))
                 pkg.env_add_path 'VIZKIT_PLUGIN_RUBY_PATH', File.join(pkg.prefix, 'lib')
             end
-            pkg.define 'ROCK_TEST_ENABLED', pkg.test_utility.enabled?
+            pkg.define 'ROCK_TEST_ENABLED', pkg.test_utility.enabled? ? "ON" : "OFF"
             if pkg.test_utility.enabled?
                 pkg.depends_on 'minitest-junit'
                 pkg.define 'ROCK_TEST_LOG_DIR', pkg.test_utility.source_dir
