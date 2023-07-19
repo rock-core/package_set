@@ -228,6 +228,9 @@ minitest:
 minitest-junit: gem
 rack-test: gem
 minitest-em-sync: gem
+minitar: gem
+zstd:
+    ubuntu: zstd
 
 concurrent-ruby:
     gem:
