@@ -232,6 +232,9 @@ minitar: gem
 zstd:
     ubuntu: zstd
 
+zstd-ruby:
+    gem: zstd-ruby
+
 concurrent-ruby:
     gem:
     - concurrent-ruby
