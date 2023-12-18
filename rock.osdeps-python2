@@ -1,22 +1,27 @@
 cython:
     debian, ubuntu: cython
     opensuse: python-Cython
+    gentoo: dev-lang/cython
 
 python:
     debian,ubuntu: python-dev
     opensuse: python-devel
+    gentoo: dev-lang/python:2.7
 
 python-nose:
     debian,ubuntu: python-nose
     opensuse: python-nose
+    gentoo: dev-python/nose
 
 python-pexpect:
     debian,ubuntu: python-pexpect
     opensuse: python-pexpect
+    gentoo: dev-python/pexpect
 
 python-msgpack:
     debian,ubuntu:
         "16.04,18.04,18.10,19.04,19.10": python-msgpack
         default: nonexistent
     opensuse: python-msgpack
+    gentoo: dev-python/msgpack
 

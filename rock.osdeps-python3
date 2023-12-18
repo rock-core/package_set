@@ -1,22 +1,27 @@
 python:
     debian,ubuntu: python3-dev
     opensuse: python3-devel
+    gentoo: ">=dev-lang/python-3"
 
 python-pip:
     debian,ubuntu: python3-pip
     opensuse: python3-pip
+    gentoo: dev-python/pip
 
 python-nose:
     debian,ubuntu: python3-nose
     opensuse: python3-nose
+    gentoo: dev-python/nose
 
 python-pexpect:
     debian,ubuntu: python3-pexpect
     opensuse: python3-pexpect
+    gentoo: dev-python/pexpect
 
 python-msgpack:
     debian,ubuntu: python3-msgpack
     opensuse: python3-msgpack
+    gentoo: dev-python/msgpack
 
 python-distutils:
     debian,ubuntu: python3-distutils
@@ -25,30 +30,37 @@ python-distutils:
 python-setuptools:
     debian,ubuntu: python3-setuptools
     opensuse: python3-setuptools
+    gentoo: dev-python/setuptools
 
 cython:
     debian, ubuntu: cython3
     opensuse: python3-Cython
+    gentoo: dev-python/cython
 
 python3:
     debian,ubuntu: python3-dev
     opensuse: python3-devel
+    gentoo: ">=dev-lang/python-3"
 
 python3-pip:
     debian,ubuntu: python3-pip
     opensuse: python3-pip
+    gentoo: dev-python/pip
 
 python3-nose:
     debian,ubuntu: python3-nose
     opensuse: python3-nose
+    gentoo: dev-python/nose
 
 python3-pexpect:
     debian,ubuntu: python3-pexpect
     opensuse: python3-pexpect
+    gentoo: dev-python/pexpect
 
 python3-msgpack:
     debian,ubuntu: python3-msgpack
     opensuse: python3-msgpack
+    gentoo: dev-python/msgpack
 
 python3-distutils:
     debian,ubuntu: python3-distutils
@@ -57,8 +69,10 @@ python3-distutils:
 python3-setuptools:
     debian,ubuntu: python3-setuptools
     opensuse: python3-setuptools
+    gentoo: dev-python/setuptools
 
 cython3:
     debian, ubuntu: cython3
     opensuse: python3-Cython
+    gentoo: dev-python/cython
 

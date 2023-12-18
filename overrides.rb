@@ -1,21 +1,6 @@
 Rock.flavors.finalize
-switched_packages = Rock.flavors.reset_invalid_branches_to('master')
 wrong_branch = Rock.flavors.find_all_overriden_flavored_branches
 
-if !switched_packages.empty?
-    pkgs = switched_packages.sort_by { |pkg, _| pkg.name }.
-        map do |pkg, original_branch|
-            "#{pkg.name} (branch=#{original_branch})"
-        end
-
-    Autoproj.warn ""
-    Autoproj.warn "the following packages are using a branch which is incompatible with the flavors"
-    Autoproj.warn "they are included in (as e.g. using the 'next' branch while being included only on 'master')."
-    Autoproj.warn "they got switched back to master"
-    Autoproj.warn "  #{pkgs.join(", ")}"
-end
-
-wrong_branch -= switched_packages
 wrong_branch = wrong_branch.find_all { |pkg| pkg.importer.branch != 'rock-rc' }
 if !wrong_branch.empty?
     pkgs = wrong_branch.map { |pkg| "#{pkg.name}(#{pkg.importer.branch})" }.join(", ")
@@ -110,7 +95,7 @@ Autoproj.manifest.each_autobuild_package do |pkg|
             if File.directory?(File.join(pkg.srcdir, 'viz'))
                 pkg.env_add_path 'VIZKIT_PLUGIN_RUBY_PATH', File.join(pkg.prefix, 'lib')
             end
-            pkg.define 'ROCK_TEST_ENABLED', pkg.test_utility.enabled?
+            pkg.define 'ROCK_TEST_ENABLED', pkg.test_utility.enabled? ? "ON" : "OFF"
             if pkg.test_utility.enabled?
                 pkg.depends_on 'minitest-junit'
                 pkg.define 'ROCK_TEST_LOG_DIR', pkg.test_utility.source_dir
