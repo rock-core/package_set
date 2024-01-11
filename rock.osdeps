@@ -333,3 +333,7 @@ ftpd:
 net-ftp:
   gem:
     - net-ftp
+
+sys-filesystem:
+    gem:
+    - sys-filesystem
