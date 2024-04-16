@@ -337,3 +337,8 @@ net-ftp:
 sys-filesystem:
     gem:
     - sys-filesystem
+
+grpc-ruby:
+    gem: grpc
+grpc-ruby-tools:
+    gem: grpc-tools
