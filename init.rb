@@ -28,10 +28,15 @@ Autoproj.env_add_path "PATH", File.join(File.expand_path(__dir__), "rubocop-bin"
 Autoproj.env_set "RUBOCOP_VERSION_MANAGER_ROOT",
                  File.join(Autoproj.workspace.prefix_dir, "rubocop-versions")
 Autoproj.env_set "RUBOCOP_VERSION_MANAGER_DEFAULT", "0.83.0"
-rubocop_gemfile = File.join(Autoproj.workspace.root_dir, "autoproj", "Gemfile.rubocop")
-if File.file?(rubocop_gemfile)
+
+rubocop_gemfile = Autoproj.config.get(
+    "rubocop-manager-gemfile",
+    File.expand_path("Gemfile.rubocop", __dir__)
+)
+if rubocop_gemfile
     Autoproj.env_set "RUBOCOP_VERSION_MANAGER_GEMFILE", rubocop_gemfile
 end
+Autoproj.env.set "AUTOPROJ_CMD", "rubocop-manager"
 
 # Ruby 1.8 is completly outdated, if you modify this, take respect to the addition checks below against 1.9 
 if defined?(RUBY_VERSION) && (RUBY_VERSION =~ /^1\.8\./)
