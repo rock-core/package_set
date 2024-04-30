@@ -1,0 +1,6 @@
+# Gemfile used to install rubocop by the rubocop version manager
+#
+# If you need other gems, add a Gemfile.rubocop file into a package set or your
+# main build configuration and set the rubocop-manager-gemfile configuration
+# variable to the path of this file
+gem "rubocop-rock"
