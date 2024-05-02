@@ -18,6 +18,25 @@ ignore(/~$/)
 ## This seem to be only triggered when tests are run under autoproj (the weird part)
 Autoproj.env_set "MT_CPU", "1"
 
+# Setup our "rubocop version manager"
+#
+# This is a script that auto-installs and auto-starts different version of
+# rubocop based on a .rubocop-version file in the packages. This is meant as a
+# way to smoothly migrate away from rubocop 0.83.0 ... which we are stuck on for
+# a long while now
+Autoproj.env_add_path "PATH", File.join(File.expand_path(__dir__), "rubocop-bin")
+Autoproj.env_set "RUBOCOP_VERSION_MANAGER_ROOT",
+                 File.join(Autoproj.workspace.prefix_dir, "rubocop-versions")
+Autoproj.env_set "RUBOCOP_VERSION_MANAGER_DEFAULT", "0.83.0"
+
+rubocop_gemfile = Autoproj.config.get(
+    "rubocop-manager-gemfile",
+    File.expand_path("Gemfile.rubocop", __dir__)
+)
+if rubocop_gemfile
+    Autoproj.env_set "RUBOCOP_VERSION_MANAGER_GEMFILE", rubocop_gemfile
+end
+Autoproj.env.set "AUTOPROJ_CMD", "rubocop-manager"
 
 # Ruby 1.8 is completly outdated, if you modify this, take respect to the addition checks below against 1.9 
 if defined?(RUBY_VERSION) && (RUBY_VERSION =~ /^1\.8\./)
