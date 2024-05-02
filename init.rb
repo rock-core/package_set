@@ -36,7 +36,7 @@ rubocop_gemfile = Autoproj.config.get(
 if rubocop_gemfile
     Autoproj.env_set "RUBOCOP_VERSION_MANAGER_GEMFILE", rubocop_gemfile
 end
-Autoproj.env.set "AUTOPROJ_CMD", "rubocop-manager"
+Autoproj.env.set "RUBOCOP_CMD", "rubocop-manager"
 
 # Ruby 1.8 is completly outdated, if you modify this, take respect to the addition checks below against 1.9 
 if defined?(RUBY_VERSION) && (RUBY_VERSION =~ /^1\.8\./)
