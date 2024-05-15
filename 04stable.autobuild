@@ -9,7 +9,6 @@ in_flavor 'master', 'stable' do
     ruby_package 'gui/vizkit'
 
     cmake_package 'gui/vizkit3d' do |pkg|
-        pkg.depends_on "gui/osg_qt4"
         if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
             pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
         end
