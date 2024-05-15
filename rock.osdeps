@@ -136,6 +136,15 @@ qt4:
     macos-port: qt4-mac
     arch,manjarolinux: qt4
 
+qt5:
+    debian,ubuntu: [qtbase5-dev, qtbase5-dev-tools, libqt5svg5-dev, qttools5-dev]
+    gentoo: ["dev-qt/qtcore:5", "dev-qt/qtgui:5", "dev-qt/qtsvg:5"]
+    #fedora: [qt5-qtbase-devel, qt5-qtsvg-devel]
+    #opensuse: [libqt5-qtbase, libqt5-qtsvg]
+    #macos-brew: qt5
+    #macos-port: qt5-mac
+    #arch,manjarolinux: qt5
+
 qt4-opengl:
     debian,ubuntu: libqt4-opengl-dev
     gentoo: dev-qt/qtopengl:4
@@ -144,11 +153,30 @@ qt4-opengl:
     macos-port: qt4-mac
     arch: qt4
 
+qt5-opengl:
+    debian,ubuntu: libqt5opengl5-dev
+    gentoo: dev-qt/qtopengl:5
+    #fedora: qt5-qtbase-devel
+    #opensuse: qt5-qtbase
+    #macos-brew: qt5
+    #macos-port: qt5-mac
+    #arch: qt5
+
 qt4-webkit:
     debian,ubuntu: libqtwebkit-dev
     fedora,opensuse: qt-devel
     macos-brew: qt4
     macos-port: qt4-mac
+
+qt5-webkit:
+    # Note: qtwebkit has been deprecated by QT.
+    # developers should look into supporting webchannel/webengine/webview
+    debian,ubuntu: libqt5webkit5-dev
+    gentoo: nonexistent
+    #fedora: qt5-qtwebkit-devel
+    #opensuse: libqt5-qtwebkit
+    #macos-brew: qt5
+    #macos-port: qt5-mac
 
 qt-designer:
     debian,ubuntu: qt4-designer
@@ -156,6 +184,14 @@ qt-designer:
     fedora,opensuse: qt-devel
     macos-brew: qt4
     macos-port: qt4-mac
+
+qt5-designer:
+    debian,ubuntu: qttools5-dev-tools
+    gentoo: dev-qt/designer:5
+    #fedora: qt5-qttools-devel
+    #opensuse: libqt5-qttools
+    #macos-brew: qt5
+    #macos-port: qt5-mac
 
 opencv:
     debian: libopencv-dev
