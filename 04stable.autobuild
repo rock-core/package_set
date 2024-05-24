@@ -109,7 +109,7 @@ in_flavor 'master', 'stable' do
                         # Wait for having imported the package before we add the
                         # file
                         pkg.post_import do
-                            if File.exists?(shell_file)
+                            if File.exist?(shell_file)
                                 Autoproj.env_source_file shell_file
                             end
                         end
