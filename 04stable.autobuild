@@ -132,6 +132,10 @@ in_flavor 'master', 'stable' do
     orogen_package 'base/orogen/std'
 
     ruby_package 'tools/syskit' do |pkg|
+        # the grpc-tools gem is only available on x86(-64). This disables
+        # telemetry support in syskit on non-x86 platforms
+        pkg.env_set 'SYSKIT_HAS_GRPC',
+                    (RUBY_PLATFORM.match?(/x86/) ? "1" : "0")
         pkg.env_set 'SYSKIT_USE_ROCK_BUNDLES',
                     (Autoproj.config.get('syskit_use_bundles') ? '1' : '0')
         pkg.env_add_path(
