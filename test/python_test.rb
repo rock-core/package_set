@@ -57,7 +57,7 @@ module Rock
 
             # Python3 has higher priority, so should be picked
             python_path = `which python3`.strip()
-            if File.exists?(python_path)
+            if File.exist?(python_path)
                 assert(version =~ /3.[0-9]+/)
             end
         end
