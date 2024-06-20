@@ -151,7 +151,7 @@ module Rock
         resolvers.each do |resolver|
             begin
                 bin, version = resolver.call
-                if bin && File.exists?(bin) && version
+                if bin && File.exist?(bin) && version
                     Autoproj.debug "Rock.resolve_python: found python '#{bin}'"\
                         " version '#{version}'"
                     break
@@ -191,7 +191,7 @@ module Rock
     end
     def self.remove_python_shims(root_dir)
         shim_path = File.join(root_dir, "install","bin","python")
-        if File.exists?(shim_path)
+        if File.exist?(shim_path)
             FileUtils.rm shim_path
         end
     end
