@@ -217,6 +217,8 @@ in_flavor 'master', 'stable' do
         pkg.env_add_path 'QT_PLUGIN_PATH', File.join(pkg.prefix, "lib", "qt")
     end
 
+    cmake_package 'gui/qtpropertybrowser'
+
     ##### Base implementation for data acquisition
     cmake_package 'drivers/iodrivers_base'
     orogen_package 'drivers/orogen/iodrivers_base'
