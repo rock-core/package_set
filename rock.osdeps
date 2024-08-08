@@ -380,3 +380,6 @@ grpc-ruby:
     gem: grpc
 grpc-ruby-tools:
     gem: grpc-tools
+
+valgrind:
+    debian,ubuntu: valgrind
