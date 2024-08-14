@@ -41,6 +41,10 @@ setup_package 'rtt' do |rtt|
     rtt.define 'ENABLE_TESTS', rtt.test_utility.enabled?
 end
 
+setup_package "typelib" do |pkg|
+    pkg.define "BUILD_TESTS", pkg.test_utility.enabled?
+end
+
 if !Autoproj.config.get('USE_OCL')
     #This package can compiled but is unneeded by default
     remove_from_default 'log4cpp' 
