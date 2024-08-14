@@ -189,3 +189,16 @@ unless Autoproj.config.has_value_for?('syskit_use_bundles')
     Autoproj.config.set 'syskit_use_bundles', true, true
 end
 
+if (sanitizers = Autoproj.config.get("cxx_sanitizers", nil))
+    list = sanitizers.split(",")
+    if list.include?("address")
+        asan_lib_path = Autoproj.config.get("libasan_path", nil)
+        unless asan_lib_path
+            raise "you enabled the ASan sanitizer, but did not set the libasan_path configuration variable. Set it to the path to the libasan shared library"
+        end
+        Autoproj.env_add_path "LD_PRELOAD", asan_lib_path
+        Autoproj.env_set "LSAN_OPTIONS", "exitcode=0"
+        Autoproj.env_set "ASAN_OPTIONS", "detect_leaks=0"
+    end
+end
+
