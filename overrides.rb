@@ -80,6 +80,8 @@ Autoproj.manifest.each_autobuild_package do |pkg|
         pkg.post_import do
             Rock.update_cmake_build_type_from_tags(pkg)
 
+            pkg.define "ROCK_USE_SANITIZERS", Autoproj.config.get("cxx_sanitizers", nil)
+
             # Augment autoproj's autodetection of test tasks to handle
             # bindings/ruby
             unless pkg.test_utility.source_dir && Autoproj.config.get("test_junit_output", true)
