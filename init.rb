@@ -189,6 +189,7 @@ unless Autoproj.config.has_value_for?('syskit_use_bundles')
     Autoproj.config.set 'syskit_use_bundles', true, true
 end
 
+# See README
 if (sanitizers = Autoproj.config.get("cxx_sanitizers", nil))
     list = sanitizers.split(",")
     if list.include?("address")

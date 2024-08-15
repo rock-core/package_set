@@ -9,6 +9,26 @@ of `autoproj/manifest`:
 package_sets:
 - github: rock-core/package_set
 ```
+## Configuration options
+
+### `cxx_sanitizers` (EXPERIMENTAL)
+
+`cxx_sanitizers` can be set to a comma separated list of sanitizers which will
+be passed to gcc's -fsanitize= option, when using the Rock.cmake macro package.
+If the list contains 'address', `libasan_path` must also be provided, pointing to
+the absolute path to the libasan library.
+
+The configuration is not fine-grained. All programs will run under libasan as
+soon as you source `env.sh`. This is heavy-handed, and will probably be refined
+in the future.
+
+Because of this, the setup will also disable leak checking. This is because all
+programs essentially leak a little and therefore having it on makes
+*everything* fails. `git`, `ruby` ... everything.
+
+At least on Ubuntu 20.04, libasan chokes when some C++ code throws exceptions.
+This affects the toolchain itself - the build of the toolchain actually does not
+pass yet under libasan and Ubuntu 20.04. You have been warned.
 
 ## `rubocop-manager`
 
