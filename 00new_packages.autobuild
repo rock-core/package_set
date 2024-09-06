@@ -33,3 +33,6 @@ end
 
 cmake_package "gui/osg_qt4"
 remove_from_default "gui/osg_qt4"
+
+ruby_package "base/ruby_eigen"
+remove_from_default "base/ruby_eigen"
