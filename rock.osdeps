@@ -383,3 +383,6 @@ grpc-ruby-tools:
 
 valgrind:
     debian,ubuntu: valgrind
+
+irb:
+  gem: irb
