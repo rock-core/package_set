@@ -384,5 +384,13 @@ grpc-ruby-tools:
 valgrind:
     debian,ubuntu: valgrind
 
+yaml:
+    debian,ubuntu: libyaml-dev
+    gentoo: dev-libs/libyaml
+    fedora,opensuse: libyaml-devel
+    arch,manjarolinux: libyaml
+
 irb:
   gem: irb
+  osdep:
+    - yaml
