@@ -194,6 +194,7 @@ in_flavor 'master', 'stable' do
     end
     orogen_package 'drivers/orogen/aggregator' do |pkg|
         pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
+        pkg.env_add_path 'RUBYLIB', File.join(pkg.prefix, "share", "aggregator", "lib")
     end
     orogen_package 'drivers/orogen/transformer' do |pkg|
         pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
