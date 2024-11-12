@@ -52,59 +52,14 @@ if !Autoproj.has_source_handler? 'github'
     Autoproj.gitorious_server_configuration('GITHUB', 'github.com', :http_url => 'https://github.com')
 end
 
-require File.join(__dir__, 'rock/flavor_definition')
-require File.join(__dir__, 'rock/flavor_manager')
-require File.join(__dir__, 'rock/in_flavor_context')
 require File.join(__dir__, 'rock/current_release')
 require File.join(__dir__, 'rock/python')
 
-Rock.flavors.define 'stable'
-Rock.flavors.alias 'stable', 'next'
-Rock.flavors.define 'master', :implicit => true
 
-configuration_option('ROCK_SELECTED_FLAVOR', 'string',
-    :default => 'master',
-    :possible_values => ['stable', 'master'],
-    :doc => [
-        "Which flavor of Rock do you want to use ?",
-        "Stay with the default ('master') if you want to use Rock on the most recent",
-        "distributions (Ubuntu 16.04 and later). Use 'stable' only for ",
-        "now officially unsupported distributions (Ubuntu 14.04)"])
 
-if Rock.in_release? && !Autoproj.config.has_value_for?('ROCK_SELECTED_FLAVOR')
-    Autoproj.config.set 'ROCK_SELECTED_FLAVOR', 'stable', true
-end
-
-Rock.flavors.select_current_flavor_by_name(
-    ENV['ROCK_FORCE_FLAVOR'] || Autoproj.config.get('ROCK_SELECTED_FLAVOR'))
-
-current_flavor = Rock.flavors.current_flavor
-
-#This check is needed because the overrides file will override the FLAVOR selection.
-#Furthermore a selection != stable can cause a inconsistent layout (cause by in_flavor system in the package_sets)
-if Rock.in_release? && current_flavor.branch != "stable" 
-    if ENV['ROCK_RC'] == '1'
-        Autoproj.warn ""
-        Autoproj.warn "Found a release file and the flavor is not master"
-        Autoproj.warn "This would usually be an error, but since ROCK_RC is set to 1,"
-        Autoproj.warn "it is assumed that you're preparing a release candidate"
-        Autoproj.warn ""
-    else
-        Autoproj.error ""
-        Autoproj.error "You selected the flavor '#{current_flavor.branch}' but '#{File.join(Autoproj.root_dir,"autoproj", "overrides.d", "25-release.yml")}' exists."
-        Autoproj.error "This means you are on a release; either unselect the release by calling 'rock-release switch master'"
-        Autoproj.error "or call 'autoproj reconfigure' and select the FLAVOR 'stable'"
-        exit 1
-    end
-end
-
-Autoproj.config.set('ROCK_SELECTED_FLAVOR', current_flavor.name, true)
-Autoproj.config.set('ROCK_FLAVOR', current_flavor.branch, true)
-Autoproj.config.set('ROCK_BRANCH', current_flavor.branch, true)
-
-if current_flavor.name != 'master' && Autoproj::PackageSet.respond_to?(:add_source_file)
-    Autoproj::PackageSet.add_source_file "source-stable.yml"
-end
+# if current_flavor.name != 'master' && Autoproj::PackageSet.respond_to?(:add_source_file)
+#     Autoproj::PackageSet.add_source_file "source-stable.yml"
+# end
 
 require File.join(__dir__, 'rock', 'cxx')
 if Autoproj.respond_to?(:workspace) # autoproj 2.0
@@ -114,31 +69,8 @@ else
 end
 
 def enabled_flavor_system
-    Rock.flavors.register_flavored_package_set(Autoproj.current_package_set)
-end
-
-def in_flavor(*flavors, &block)
-    Rock.flavors.in_flavor(*flavors, &block)
-end
-
-def only_in_flavor(*flavors, &block)
-    Rock.flavors.only_in_flavor(*flavors, &block)
-end
-
-def flavor_defined?(flavor_name)
-    Rock.flavors.has_flavor?(flavor_name)
-end
-
-def package_in_flavor?(pkg, flavor_name)
-    Rock.flavors.package_in_flavor?(pkg, flavor_name)
-end
-
-def add_packages_to_flavors(mappings)
-    Rock.flavors.add_packages_to_flavors(Autoproj.current_package_set, mappings)
-end
-
-def remove_packages_from_flavors(mappings)
-    Rock.flavors.remove_packages_from_flavors(Autoproj.current_package_set, mappings)
+    Autoproj.warn "Flavors are deprecated"
+    # Rock.flavors.register_flavored_package_set(Autoproj.current_package_set)
 end
 
 # Defines a bundle package in the installation

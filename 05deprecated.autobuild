@@ -1,4 +1,0 @@
-#This package should removed during rock-1510 release
-if Rock.flavors.current_flavor.name == "stable"
-end
-
