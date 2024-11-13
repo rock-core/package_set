@@ -1,41 +1,10 @@
 Rock.flavors.finalize
-wrong_branch = Rock.flavors.find_all_overriden_flavored_branches
-
-wrong_branch = wrong_branch.find_all { |pkg| pkg.importer.branch != 'rock-rc' }
-if !wrong_branch.empty?
-    pkgs = wrong_branch.map { |pkg| "#{pkg.name}(#{pkg.importer.branch})" }.join(", ")
-
-    Autoproj.warn ""
-    Autoproj.warn "the following packages are using a different branch than the current flavor"
-    Autoproj.warn "it is assumed that it is intentional"
-    Autoproj.warn "  #{pkgs}"
-end
 
 Autoproj.env_add_path 'ROCK_BUNDLE_PATH', File.join(Autobuild.prefix, 'share', 'rock')
 Autoproj.env_add_path 'ROCK_BUNDLE_PATH', File.join(Autoproj.root_dir, 'bundles')
 
-require File.join(__dir__, 'rock', 'git_hook')
 require File.join(__dir__, 'rock', 'cmake_build_type')
 Autoproj.manifest.each_autobuild_package do |pkg|
-    case pkg.importer
-    when Autobuild::Git
-        if ENV['ROCK_DISABLE_CROSS_FLAVOR_CHECKS'] != '1'
-            # Finally, verify that when pkg A from flavor X depends on pkg B,
-            # then B needs to be available in flavor X as well
-            Rock.flavors.verify_cross_flavor_dependencies(pkg)
-        end
-
-        # Do the git hook setup in a separate setup block since we must do it
-        # post-import
-        pkg.post_import do
-            if pkg.importer.branch == "next" || pkg.importer.branch == "stable"
-                Rock.install_git_hook pkg, 'git_do_not_commit_hook', 'pre-commit'
-            else
-                Rock.remove_git_hook pkg, 'pre-commit'
-            end
-        end
-    end
-
     # NOTE: do not use a case/when to dispatch the package types.
     # Autobuild::Orogen is a subclass of Autobuild::CMake - and therefore needs
     # to get through both ifs. It's not the case with Autobuild::Ruby, but I
