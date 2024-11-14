@@ -3,225 +3,223 @@ manifest = if Autoproj.respond_to?(:workspace)
            else Autoproj.manifest
            end
 
-add_packages_to_flavors 'stable' => ['orogen', 'rtt', 'utilmm', 'utilrb', 'typelib', 'rtt_typelib', 'tools/metaruby', 'ocl', 'log4cpp']
 
-in_flavor 'master', 'stable' do
-    ruby_package 'gui/vizkit'
+ruby_package 'gui/vizkit'
 
-    cmake_package 'gui/vizkit3d' do |pkg|
-        if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
-            pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
-        end
-        pkg.env_add_path 'OSG_FILE_PATH', File.join(pkg.prefix, "share", "vizkit" )
-
-        # Add our prefix to the VIZKIT_PLUGIN_RUBY_PATH. Relevant packages will have
-        # to list the place where they install themselves
-        # TODO the path should be renamed to VIZKIT3D_PLUGIN_PATH
-        pkg.env_add_path 'VIZKIT_PLUGIN_RUBY_PATH', File.join(pkg.prefix, 'lib')
-        pkg.env_add_path 'VIZKIT_PLUGIN_RUBY_PATH', File.join(pkg.prefix, 'lib', 'vizkit')
+cmake_package 'gui/vizkit3d' do |pkg|
+    if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
+        pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
     end
+    pkg.env_add_path 'OSG_FILE_PATH', File.join(pkg.prefix, "share", "vizkit" )
 
-    cmake_package 'base/console_bridge'
-    ruby_package 'tools/rubigen' do |pkg|
-        pkg.depends_on 'activesupport'
-        pkg.depends_on 'bundler'
-        pkg.depends_on 'cucumber'
-        pkg.rake_setup_task = nil
+    # Add our prefix to the VIZKIT_PLUGIN_RUBY_PATH. Relevant packages will have
+    # to list the place where they install themselves
+    # TODO the path should be renamed to VIZKIT3D_PLUGIN_PATH
+    pkg.env_add_path 'VIZKIT_PLUGIN_RUBY_PATH', File.join(pkg.prefix, 'lib')
+    pkg.env_add_path 'VIZKIT_PLUGIN_RUBY_PATH', File.join(pkg.prefix, 'lib', 'vizkit')
+end
+
+cmake_package 'base/console_bridge'
+ruby_package 'tools/rubigen' do |pkg|
+    pkg.depends_on 'activesupport'
+    pkg.depends_on 'bundler'
+    pkg.depends_on 'cucumber'
+    pkg.rake_setup_task = nil
+end
+remove_from_default 'tools/rubigen'
+
+bundle_package 'bundles/rock'
+cmake_package 'tools/pocolog_cpp'
+cmake_package 'tools/service_discovery' do |pkg|
+    pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+end
+
+ruby_package 'tools/autoproj'
+remove_from_default 'tools/autoproj'
+ruby_package 'tools/autobuild'
+remove_from_default 'tools/autobuild'
+
+cmake_package 'base/types' do |pkg|
+    if package_enabled?('external/sisl')
+        pkg.define 'SISL_PREFIX', package('external/sisl').prefix
     end
-    remove_from_default 'tools/rubigen'
+pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+end
+cmake_package 'base/cmake' do |pkg|
+    pkg.env_add_path 'CMAKE_PREFIX_PATH', pkg.prefix
+end
+import_package 'base/templates/ruby_lib'
+ruby_package 'base/admin_scripts'
+remove_from_default 'base/admin_scripts'
 
-    bundle_package 'bundles/rock'
-    cmake_package 'tools/pocolog_cpp'
-    cmake_package 'tools/service_discovery' do |pkg|
-        pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+import_package 'base/doc'
+remove_from_default 'base/doc'
+
+cmake_package 'base/numeric'
+
+ruby_package 'base/scripts' do |pkg|
+    if Autoproj.config.get('syskit_use_bundles')
+        Autoproj.env_add_path(
+            'ROBY_PLUGIN_PATH',
+            File.join(pkg.srcdir, 'lib', 'rock', 'roby_plugin.rb')
+        )
     end
+end
 
-    ruby_package 'tools/autoproj'
-    remove_from_default 'tools/autoproj'
-    ruby_package 'tools/autobuild'
-    remove_from_default 'tools/autobuild'
+import_package 'base/templates/cmake_lib' do |pkg|
+    pkg.env_set "ROCK_TEMPLATE_PREFIX", File.join(File.expand_path('..', pkg.srcdir), '')
+    pkg.env_set "ROCK_TEMPLATE_SUFFIX", ""
+end
 
-    cmake_package 'base/types' do |pkg|
-        if package_enabled?('external/sisl')
-            pkg.define 'SISL_PREFIX', package('external/sisl').prefix
-        end
-	pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
-    end
-    cmake_package 'base/cmake' do |pkg|
-        pkg.env_add_path 'CMAKE_PREFIX_PATH', pkg.prefix
-    end
-    import_package 'base/templates/ruby_lib'
-    ruby_package 'base/admin_scripts'
-    remove_from_default 'base/admin_scripts'
+import_package 'base/templates/cmake_vizkit_widget'
+import_package 'base/templates/vizkit3d_plugin'
+import_package 'base/templates/bundle'
+import_package 'base/templates/doc'
 
-    import_package 'base/doc'
-    remove_from_default 'base/doc'
-
-    cmake_package 'base/numeric'
-
-    ruby_package 'base/scripts' do |pkg|
-        if Autoproj.config.get('syskit_use_bundles')
-            Autoproj.env_add_path(
-                'ROBY_PLUGIN_PATH',
-                File.join(pkg.srcdir, 'lib', 'rock', 'roby_plugin.rb')
-            )
-        end
-    end
-
-    import_package 'base/templates/cmake_lib' do |pkg|
-        pkg.env_set "ROCK_TEMPLATE_PREFIX", File.join(File.expand_path('..', pkg.srcdir), '')
-        pkg.env_set "ROCK_TEMPLATE_SUFFIX", ""
-    end
-
-    import_package 'base/templates/cmake_vizkit_widget'
-    import_package 'base/templates/vizkit3d_plugin'
-    import_package 'base/templates/bundle'
-    import_package 'base/templates/doc'
-
-    # Setup bundle support only if base/scripts is enabled 
-    if package_enabled?('base/scripts')
-        setup_package 'base/scripts' do |pkg|
-            bundle_envsh = File.join(Autoproj.root_dir, '.bundle_env.sh')
-            if !File.file?(bundle_envsh)
-                File.open(bundle_envsh, "w") do |io|
-                    io.puts "# File generated by the bundle-default command"
-                    io.puts "# Do not change ! Your changes would be overriden !"
-                    io.puts "unset ROCK_BUNDLE"
-                end
+# Setup bundle support only if base/scripts is enabled 
+if package_enabled?('base/scripts')
+    setup_package 'base/scripts' do |pkg|
+        bundle_envsh = File.join(Autoproj.root_dir, '.bundle_env.sh')
+        if !File.file?(bundle_envsh)
+            File.open(bundle_envsh, "w") do |io|
+                io.puts "# File generated by the bundle-default command"
+                io.puts "# Do not change ! Your changes would be overriden !"
+                io.puts "unset ROCK_BUNDLE"
             end
-            Autoproj.env_source_file bundle_envsh
+        end
+        Autoproj.env_source_file bundle_envsh
 
-            
-            shell_helpers =
-                if Autoproj.config.respond_to?(:shell_helpers?)
-                    Autoproj.config.shell_helpers? # Autoproj 2.x
-                else Autoproj.shell_helpers?
-                end
+        
+        shell_helpers =
+            if Autoproj.config.respond_to?(:shell_helpers?)
+                Autoproj.config.shell_helpers? # Autoproj 2.x
+            else Autoproj.shell_helpers?
+            end
 
-            if shell_helpers && (shell = ENV['SHELL'])
-                shell_kind = File.basename(shell)
-                if shell_kind =~ /^\w+$/
-                    shell_file = File.join(pkg.srcdir, "shell", shell_kind)
+        if shell_helpers && (shell = ENV['SHELL'])
+            shell_kind = File.basename(shell)
+            if shell_kind =~ /^\w+$/
+                shell_file = File.join(pkg.srcdir, "shell", shell_kind)
 
-                    if File.file?(shell_file)
-                        Autoproj.env_source_file shell_file
-                    else
-                        # Wait for having imported the package before we add the
-                        # file
-                        pkg.post_import do
-                            if File.exist?(shell_file)
-                                Autoproj.env_source_file shell_file
-                            end
+                if File.file?(shell_file)
+                    Autoproj.env_source_file shell_file
+                else
+                    # Wait for having imported the package before we add the
+                    # file
+                    pkg.post_import do
+                        if File.exist?(shell_file)
+                            Autoproj.env_source_file shell_file
                         end
                     end
                 end
-            elsif shell.nil?
-                Autoproj.error("Unable to detect shell type. Please set the SHELL environment variable or disable \nshell helpers altogether by setting the shell_helpers configuration variable to false.")
             end
+        elsif shell.nil?
+            Autoproj.error("Unable to detect shell type. Please set the SHELL environment variable or disable \nshell helpers altogether by setting the shell_helpers configuration variable to false.")
         end
     end
-
-    cmake_package 'external/sisl' do |pkg|
-        pkg.define "BUILD_SHARED_LIBS","ON"
-        pkg.doc_task do
-            pkg.message "copying HTML documentation from %s"
-        end # Nothing to do, SISL ships with the generated documentation
-        pkg.doc_dir = File.join(pkg.srcdir, 'doc', 'html')
-    end
-
-    orogen_package 'base/orogen/std'
-
-    ruby_package 'tools/syskit' do |pkg|
-        # the grpc-tools gem is only available on x86(-64). This disables
-        # telemetry support in syskit on non-x86 platforms
-        pkg.env_set 'SYSKIT_HAS_GRPC',
-                    (RUBY_PLATFORM.match?(/x86/) ? "1" : "0")
-        pkg.env_set 'SYSKIT_USE_ROCK_BUNDLES',
-                    (Autoproj.config.get('syskit_use_bundles') ? '1' : '0')
-        pkg.env_add_path(
-            'ROBY_PLUGIN_PATH',
-            File.join(pkg.srcdir, 'lib', 'syskit', 'roby_app', 'register_plugin.rb')
-        )
-        pkg.env_set 'Syskit_DIR', File.join(pkg.srcdir, 'cmake')
-    end
-
-    ruby_package  'tools/orocos.rb' do |pkg|
-        pkg.env_set 'ORBInitRef',"NameService=corbaname::127.0.0.1"
-        pkg.rake_test_task = Autoproj.config.get("orocosrb_test_target", "test")
-        if pkg.test_utility.enabled? && Autobuild::Orogen.transports.include?('mqueue')
-            pkg.env_set 'OROCOSRB_TEST_USE_MQUEUE', '1'
-        end
-
-        def pkg.invoke_rake(target_name = rake_setup_task)
-            super
-            if test_utility.enabled?
-                Autobuild.invoke_make_parallel(self) do |*make_options|
-                    make_options = make_options.
-                        map { |opt| opt.gsub(',', ';') }
-                    test_target = "setup:orogen_all[1,#{Autobuild::Orogen.transports.join(" ")},'#{make_options.join("' '")}']"
-                    super(test_target)
-                end
-            end
-        end
-    end
-
-    ruby_package 'tools/pocolog'
-    orogen_package 'tools/logger'
-    orogen_package 'base/orogen/types' do |pkg|
-        pkg.orogen_file = "base.orogen"
-        if package_selected?('external/sisl')
-            pkg.define "SISL_PREFIX", package('external/sisl').prefix
-        end
-        pkg.env_set 'ROCK_PREFIX', File.join(pkg.prefix,'share','rock')
-
-        pkg.remove_obsolete_installed_file "share", "typelib", "ruby", "base.rb"
-    end
-
-    ruby_package 'tools/roby' do |pkg|
-        pkg.doc_dir = File.join('doc', 'html')
-    end
-
-    ruby_package  'tools/log_tools' 
-
-    cmake_package 'drivers/aggregator' do |pkg|
-        pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
-    end
-    cmake_package 'drivers/transformer' do |pkg|
-        ## Keep this around as long as the refactored transformer is not in
-        ## stable
-        pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
-        pkg.env_add_path 'RUBYLIB', File.join(pkg.srcdir, "ruby", "lib")
-    end
-    orogen_package 'drivers/orogen/aggregator' do |pkg|
-        pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
-        pkg.env_add_path 'RUBYLIB', File.join(pkg.prefix, "share", "aggregator", "lib")
-    end
-    orogen_package 'drivers/orogen/transformer' do |pkg|
-        pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
-    end
-
-    cmake_package 'perception/jpeg_conversion' do |pkg|
-        pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
-    end
-    metapackage 'image_processing/jpeg_conversion', 'perception/jpeg_conversion'
-
-    cmake_package 'perception/frame_helper' do |pkg|
-        if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
-            pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
-        end
-        pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
-    end
-    metapackage 'image_processing/frame_helper', 'perception/frame_helper'
-
-    ##### Graphical User Interface related packages 
-    cmake_package 'gui/rock_widget_collection' do |pkg|
-        pkg.env_add_path 'QT_PLUGIN_PATH', File.join(pkg.prefix, "lib", "qt")
-    end
-
-    cmake_package 'gui/qtpropertybrowser'
-
-    ##### Base implementation for data acquisition
-    cmake_package 'drivers/iodrivers_base'
-    orogen_package 'drivers/orogen/iodrivers_base'
 end
+
+cmake_package 'external/sisl' do |pkg|
+    pkg.define "BUILD_SHARED_LIBS","ON"
+    pkg.doc_task do
+        pkg.message "copying HTML documentation from %s"
+    end # Nothing to do, SISL ships with the generated documentation
+    pkg.doc_dir = File.join(pkg.srcdir, 'doc', 'html')
+end
+
+orogen_package 'base/orogen/std'
+
+ruby_package 'tools/syskit' do |pkg|
+    # the grpc-tools gem is only available on x86(-64). This disables
+    # telemetry support in syskit on non-x86 platforms
+    pkg.env_set 'SYSKIT_HAS_GRPC',
+                (RUBY_PLATFORM.match?(/x86/) ? "1" : "0")
+    pkg.env_set 'SYSKIT_USE_ROCK_BUNDLES',
+                (Autoproj.config.get('syskit_use_bundles') ? '1' : '0')
+    pkg.env_add_path(
+        'ROBY_PLUGIN_PATH',
+        File.join(pkg.srcdir, 'lib', 'syskit', 'roby_app', 'register_plugin.rb')
+    )
+    pkg.env_set 'Syskit_DIR', File.join(pkg.srcdir, 'cmake')
+end
+
+ruby_package  'tools/orocos.rb' do |pkg|
+    pkg.env_set 'ORBInitRef',"NameService=corbaname::127.0.0.1"
+    pkg.rake_test_task = Autoproj.config.get("orocosrb_test_target", "test")
+    if pkg.test_utility.enabled? && Autobuild::Orogen.transports.include?('mqueue')
+        pkg.env_set 'OROCOSRB_TEST_USE_MQUEUE', '1'
+    end
+
+    def pkg.invoke_rake(target_name = rake_setup_task)
+        super
+        if test_utility.enabled?
+            Autobuild.invoke_make_parallel(self) do |*make_options|
+                make_options = make_options.
+                    map { |opt| opt.gsub(',', ';') }
+                test_target = "setup:orogen_all[1,#{Autobuild::Orogen.transports.join(" ")},'#{make_options.join("' '")}']"
+                super(test_target)
+            end
+        end
+    end
+end
+
+ruby_package 'tools/pocolog'
+orogen_package 'tools/logger'
+orogen_package 'base/orogen/types' do |pkg|
+    pkg.orogen_file = "base.orogen"
+    if package_selected?('external/sisl')
+        pkg.define "SISL_PREFIX", package('external/sisl').prefix
+    end
+    pkg.env_set 'ROCK_PREFIX', File.join(pkg.prefix,'share','rock')
+
+    pkg.remove_obsolete_installed_file "share", "typelib", "ruby", "base.rb"
+end
+
+ruby_package 'tools/roby' do |pkg|
+    pkg.doc_dir = File.join('doc', 'html')
+end
+
+ruby_package  'tools/log_tools' 
+
+cmake_package 'drivers/aggregator' do |pkg|
+    pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
+end
+cmake_package 'drivers/transformer' do |pkg|
+    ## Keep this around as long as the refactored transformer is not in
+    ## stable
+    pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
+    pkg.env_add_path 'RUBYLIB', File.join(pkg.srcdir, "ruby", "lib")
+end
+orogen_package 'drivers/orogen/aggregator' do |pkg|
+    pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
+    pkg.env_add_path 'RUBYLIB', File.join(pkg.prefix, "share", "aggregator", "lib")
+end
+orogen_package 'drivers/orogen/transformer' do |pkg|
+    pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
+end
+
+cmake_package 'perception/jpeg_conversion' do |pkg|
+    pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+end
+metapackage 'image_processing/jpeg_conversion', 'perception/jpeg_conversion'
+
+cmake_package 'perception/frame_helper' do |pkg|
+    if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
+        pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
+    end
+    pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+end
+metapackage 'image_processing/frame_helper', 'perception/frame_helper'
+
+##### Graphical User Interface related packages 
+cmake_package 'gui/rock_widget_collection' do |pkg|
+    pkg.env_add_path 'QT_PLUGIN_PATH', File.join(pkg.prefix, "lib", "qt")
+end
+
+cmake_package 'gui/qtpropertybrowser'
+
+##### Base implementation for data acquisition
+cmake_package 'drivers/iodrivers_base'
+orogen_package 'drivers/orogen/iodrivers_base'
+
 

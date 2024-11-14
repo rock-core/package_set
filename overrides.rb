@@ -1,5 +1,3 @@
-Rock.flavors.finalize
-
 Autoproj.env_add_path 'ROCK_BUNDLE_PATH', File.join(Autobuild.prefix, 'share', 'rock')
 Autoproj.env_add_path 'ROCK_BUNDLE_PATH', File.join(Autoproj.root_dir, 'bundles')
 
@@ -14,10 +12,10 @@ Autoproj.manifest.each_autobuild_package do |pkg|
         if !%w{tools/logger base/orogen/types base/orogen/std}.include?(pkg.name)
             pkg.optional_dependency 'tools/logger'
         end
-        if Rock.flavors.current_flavor.name == 'master'
-            pkg.orogen_options << '--extensions=metadata_support'
-            pkg.depends_on 'tools/orogen_metadata'
-        end
+        
+        pkg.orogen_options << '--extensions=metadata_support'
+        pkg.depends_on 'tools/orogen_metadata'
+        
         if pkg.name != 'base/orogen/std'
             pkg.optional_dependency 'base/orogen/std'
             pkg.orogen_options << '--import=std'

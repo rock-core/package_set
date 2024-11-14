@@ -1,36 +1,33 @@
-in_flavor 'master' do
-    bundle_package 'bundles/common_models'
 
-    ruby_package  'tools/telemetry'
-    cmake_package 'tools/orogen_metadata' do |pkg|
-        pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, 'share', 'orogen', 'plugins')
-        pkg.remove_obsolete_installed_file('share', 'orogen', 'plugins', 'metadata_plugin.rb')
-        pkg.remove_obsolete_installed_file('share', 'typelib', 'ruby', 'metadata_typelib.rb')
-    end
+bundle_package 'bundles/common_models'
 
-    ruby_package 'tools/oropy_bridge' do |pkg|
-        def pkg.update_environment
-            super
-            env_add_path 'PYTHONPATH', File.join(srcdir, 'python')
-            env_add_path 'RUBYLIB', File.join(srcdir, 'ruby', 'lib')
-            env_add_path 'PATH', File.join(srcdir, 'bin')
-        end
-
-        pkg.post_import do
-            if !system('python -c "import msgpack" 2> /dev/null')
-                puts "\x1b[31mmsgpack-python is needed for the oropy_bridge - install manually\x1b[0m"
-                puts "   [apt-get install python-pip]"
-                puts "    pip install --user msgpack-python"
-            end
-        end
-
-    end
-    remove_from_default 'tools/oropy_bridge'
-
-    cmake_package 'tools/orogen_opaque_autogen' do |pkg|
-        pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
-    end
-    remove_from_default 'tools/orogen_opaque_autogen'
+ruby_package  'tools/telemetry'
+cmake_package 'tools/orogen_metadata' do |pkg|
+    pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, 'share', 'orogen', 'plugins')
+    pkg.remove_obsolete_installed_file('share', 'orogen', 'plugins', 'metadata_plugin.rb')
+    pkg.remove_obsolete_installed_file('share', 'typelib', 'ruby', 'metadata_typelib.rb')
 end
 
-add_packages_to_flavors 'master' => ['orogen', 'rtt', 'utilmm', 'utilrb', 'typelib', 'rtt_typelib', 'tools/metaruby', 'ocl', 'log4cpp']
+ruby_package 'tools/oropy_bridge' do |pkg|
+    def pkg.update_environment
+        super
+        env_add_path 'PYTHONPATH', File.join(srcdir, 'python')
+        env_add_path 'RUBYLIB', File.join(srcdir, 'ruby', 'lib')
+        env_add_path 'PATH', File.join(srcdir, 'bin')
+    end
+
+    pkg.post_import do
+        if !system('python -c "import msgpack" 2> /dev/null')
+            puts "\x1b[31mmsgpack-python is needed for the oropy_bridge - install manually\x1b[0m"
+            puts "   [apt-get install python-pip]"
+            puts "    pip install --user msgpack-python"
+        end
+    end
+
+end
+remove_from_default 'tools/oropy_bridge'
+
+cmake_package 'tools/orogen_opaque_autogen' do |pkg|
+    pkg.env_add_path 'OROGEN_PLUGIN_PATH', File.join(pkg.prefix, "share", "orogen", "plugins" )
+end
+remove_from_default 'tools/orogen_opaque_autogen'
