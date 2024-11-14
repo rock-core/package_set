@@ -6,53 +6,39 @@ imports:
 version_control:
     - base/.*:
       github: rock-core/base-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
     - base/orogen/.*:
       github: rock-core/base-orogen-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
     - base/templates/.*:
       github: rock-core/base-templates-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
     - base/templates/doc:
       github: rock-core/base-templates-doc_preview
-      branch: $ROCK_BRANCH
     - base/templates/cmake_vizkit_widget:
       github: rock-core/base-templates-vizkit_widget
-      branch: $ROCK_BRANCH
     - base/templates/vizkit3d_plugin:
       github: rock-core/base-templates-vizkit3d_plugin
-      branch: $ROCK_BRANCH
     - base/doc:
       github: rock-core/base-doc
-      branch: $ROCK_BRANCH
 
     - tools/[^/]*:
       github: rock-core/tools-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
     - tools/orogen/.*:
       github: rock-core/tools-orogen-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
     - tools/orocos.rb:
       github: rock-core/tools-orocosrb
-      branch: $ROCK_BRANCH
 
     - drivers/.*:
       github: rock-core/drivers-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
     - gui/.*:
       github: rock-core/gui-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
 
     - gui/qtpropertybrowser:
       github: rock-core/gui-QtPropertyBrowser
 
     - drivers/orogen/.*:
       github: rock-core/drivers-orogen-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
 
     - perception/.*:
       github: rock-core/perception-$PACKAGE_BASENAME
-      branch: $ROCK_BRANCH
 
     - tools/autoproj:
       github: rock-core/autoproj
@@ -67,7 +53,6 @@ version_control:
 
     - bundles/.*:
       github: rock-core/bundles-$PACKAGE_BASENAME.git
-      branch: $ROCK_BRANCH
 
     - external/sisl:
       github: SINTEF-Geometry/SISL
@@ -95,9 +80,6 @@ version_control:
       tag: cpp-3.1.1
 
 overrides:
-    - ^(orogen|typelib|rtt|utilrb|utilmm|rtt_typelib|tools/metaruby)$:
-      branch: $ROCK_BRANCH
-
     - rtt:
       github: rock-core/rtt
     - orogen:

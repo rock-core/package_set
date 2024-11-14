@@ -57,9 +57,15 @@ require File.join(__dir__, 'rock/python')
 
 
 # backward compatibility for the deprecated flavor system
-Autoproj.config.set('ROCK_SELECTED_FLAVOR', "master")
-Autoproj.config.set('ROCK_FLAVOR', "master")
-Autoproj.config.set('ROCK_BRANCH', "master")
+if !Autoproj.config.has_value_for?('ROCK_SELECTED_FLAVOR') then
+    Autoproj.config.set('ROCK_SELECTED_FLAVOR', "master")
+end
+if !Autoproj.config.has_value_for?('ROCK_FLAVOR') then
+    Autoproj.config.set('ROCK_FLAVOR', "master")
+end
+if !Autoproj.config.has_value_for?('ROCK_BRANCH') then
+    Autoproj.config.set('ROCK_BRANCH', "master")
+end
 
 
 def enabled_flavor_system
