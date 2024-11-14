@@ -56,21 +56,48 @@ require File.join(__dir__, 'rock/current_release')
 require File.join(__dir__, 'rock/python')
 
 
+# backward compatibility for the deprecated flavor system
+Autoproj.config.set('ROCK_SELECTED_FLAVOR', "master")
+Autoproj.config.set('ROCK_FLAVOR', "master")
+Autoproj.config.set('ROCK_BRANCH', "master")
 
-# if current_flavor.name != 'master' && Autoproj::PackageSet.respond_to?(:add_source_file)
-#     Autoproj::PackageSet.add_source_file "source-stable.yml"
-# end
+
+def enabled_flavor_system
+    Autoproj.warn "Flavors system was removed, please remove flavor-related code from your package_sets"
+end
+
+def in_flavor(*flavors, &block)
+    Autoproj.warn "Flavors system was removed, please remove flavor-related code from your package_sets"
+    return false
+end
+    
+def only_in_flavor(*flavors, &block)
+    Autoproj.warn "Flavors system was removed, please remove flavor-related code from your package_sets"
+end
+
+def flavor_defined?(flavor_name)
+    Autoproj.warn "Flavors system was removed, please remove flavor-related code from your package_sets"
+    return false
+end
+    
+def package_in_flavor?(pkg, flavor_name)
+    Autoproj.warn "Flavors system was removed, please remove flavor-related code from your package_sets"
+    return false
+end
+    
+def add_packages_to_flavors(mappings)
+    Autoproj.warn "Flavors system was removed, please remove flavor-related code from your package_sets"
+end
+   
+def remove_packages_from_flavors(mappings)
+    Autoproj.warn "Flavors system was removed, please remove flavor-related code from your package_sets"
+end
 
 require File.join(__dir__, 'rock', 'cxx')
 if Autoproj.respond_to?(:workspace) # autoproj 2.0
     Rock.setup_cxx_support(Autoproj.workspace.os_package_resolver, Autoproj.config)
 else
     Rock.setup_cxx_support(Autoproj.osdeps, Autoproj.config)
-end
-
-def enabled_flavor_system
-    Autoproj.warn "Flavors are deprecated"
-    # Rock.flavors.register_flavored_package_set(Autoproj.current_package_set)
 end
 
 # Defines a bundle package in the installation
