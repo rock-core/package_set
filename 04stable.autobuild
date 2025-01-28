@@ -31,6 +31,7 @@ in_flavor 'master', 'stable' do
     remove_from_default 'tools/rubigen'
 
     bundle_package 'bundles/rock'
+    remove_from_default "bundles/rock"
     cmake_package 'tools/pocolog_cpp'
     cmake_package 'tools/service_discovery' do |pkg|
         pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
