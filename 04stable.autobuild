@@ -77,6 +77,7 @@ in_flavor 'master', 'stable' do
     import_package 'base/templates/cmake_vizkit_widget'
     import_package 'base/templates/vizkit3d_plugin'
     import_package 'base/templates/bundle'
+    remove_from_default "base/templates/bundle"
     import_package 'base/templates/doc'
 
     # Setup bundle support only if base/scripts is enabled 
