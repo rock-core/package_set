@@ -23,9 +23,6 @@ setup_package 'rtt' do |rtt|
         # change above is effective
         FileUtils.rm_f File.join(rtt.srcdir, "rtt", "plugin", "pluginpath.cpp")
     end
-    if rtt.respond_to?(:add_tag)
-        rtt.add_tag 'stable'
-    end
     if Autoproj.config.get('USE_OCL')
         rtt.define "PLUGINS_ENABLE_SCRIPTING", "ON"
         rtt.define 'ORO_DISABLE_PORT_DATA_SCRIPTING', 'OFF'
