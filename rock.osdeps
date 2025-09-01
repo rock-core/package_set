@@ -79,9 +79,10 @@ rice:
         - ruby-dev
 
 qwt5:
-    debian,ubuntu:
-        default: libqwt5-qt4-dev
-        '20.04,22.04,24.04': nonexistent
+    debian: libqwt5-qt4-dev
+    ubuntu:
+        '16.04,18.04,18.10,19.04,19.10': libqwt5-qt4-dev
+        default: nonexistent
     fedora,opensuse: qwt-devel
     darwin: qwt
     arch: qwt5
