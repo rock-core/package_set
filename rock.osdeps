@@ -79,14 +79,17 @@ rice:
         - ruby-dev
 
 qwt5:
-    debian,ubuntu:
-        default: libqwt5-qt4-dev
-        '20.04,22.04': nonexistent
+    debian:
+        'lenny,squeeze,wheezy,jessie,stretch,buster': libqwt5-qt4-dev
+        default: nonexistent
+    ubuntu:
+        '16.04,18.04,18.10,19.04,19.10': libqwt5-qt4-dev
+        default: nonexistent
     fedora,opensuse: qwt-devel
     darwin: qwt
     arch: qwt5
     macos-port: qwt
-    gentoo: x11-libs/qwt
+    gentoo: nonexistent
 
 vtk-qt4:
     ubuntu:
@@ -124,6 +127,7 @@ gui/osg_qt4:
     ubuntu:
         '16.04,18.04,18.10,19.04,19.10':
             osdep: osg
+        default: nonexistent
 
 qt4:
     # QMake is needed for the CMake macro for Qt4
