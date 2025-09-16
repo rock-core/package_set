@@ -5,6 +5,12 @@ manifest = if Autoproj.respond_to?(:workspace)
 
 add_packages_to_flavors 'stable' => ['orogen', 'rtt', 'utilmm', 'utilrb', 'typelib', 'rtt_typelib', 'tools/metaruby', 'ocl', 'log4cpp']
 
+def set_cmake_ruby_executable(pkg)
+    pkg.define "Ruby_EXECUTABLE", Autoproj.config.ruby_executable
+    # This is for compatibility with Ubuntu 20.04/CMake 3.16
+    pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+end
+
 in_flavor 'master', 'stable' do
     ruby_package 'gui/vizkit'
 
@@ -34,7 +40,7 @@ in_flavor 'master', 'stable' do
     remove_from_default "bundles/rock"
     cmake_package 'tools/pocolog_cpp'
     cmake_package 'tools/service_discovery' do |pkg|
-        pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+        set_cmake_ruby_executable pkg
     end
 
     ruby_package 'tools/autoproj'
@@ -46,7 +52,7 @@ in_flavor 'master', 'stable' do
         if package_enabled?('external/sisl')
             pkg.define 'SISL_PREFIX', package('external/sisl').prefix
         end
-	pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+        set_cmake_ruby_executable pkg
     end
     cmake_package 'base/cmake' do |pkg|
         pkg.env_add_path 'CMAKE_PREFIX_PATH', pkg.prefix
@@ -203,7 +209,7 @@ in_flavor 'master', 'stable' do
     end
 
     cmake_package 'perception/jpeg_conversion' do |pkg|
-        pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+        set_cmake_ruby_executable pkg
     end
     metapackage 'image_processing/jpeg_conversion', 'perception/jpeg_conversion'
 
@@ -211,7 +217,7 @@ in_flavor 'master', 'stable' do
         if manifest.package_enabled?('rtt', false) # the toolchain is built, add it to the rtt_target
             pkg.define "OROCOS_TARGET", Autoproj.config.get('rtt_target')
         end
-        pkg.define "RUBY_EXECUTABLE", Autoproj.config.ruby_executable
+        set_cmake_ruby_executable pkg
     end
     metapackage 'image_processing/frame_helper', 'perception/frame_helper'
 
