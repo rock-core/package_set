@@ -166,7 +166,13 @@ in_flavor 'master', 'stable' do
                 Autobuild.invoke_make_parallel(self) do |*make_options|
                     make_options = make_options.
                         map { |opt| opt.gsub(',', ';') }
-                    test_target = "setup:orogen_all[1,#{Autobuild::Orogen.transports.join(" ")},'#{make_options.join("' '")}']"
+                    test_options = [1]
+                    test_options << Autobuild::Orogen.transports.join(" ")
+                    make_options = make_options.join("' '")
+                    if make_options =~ /[a-zA-Z0-9]/
+                        test_options << make_options
+                    end
+                    test_target = "setup:orogen_all[#{test_options.join(',')}]"
                     super(test_target)
                 end
             end
