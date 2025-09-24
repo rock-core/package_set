@@ -189,46 +189,18 @@ module Rock
             return auto_resolve_python(ws: ws, version: version)
         end
     end
-    def self.remove_python_shims(root_dir)
-        shim_path = File.join(root_dir, "install","bin","python")
-        if File.exist?(shim_path)
-            FileUtils.rm shim_path
+    def self.remove_python_shims(root_dir)      #TODO rename
+        venv_path = File.join(root_dir, "install", "venv")
+        if File.exist?(venv_path)
+            FileUtils.rm_r venv_path
         end
     end
 
-    def self.rewrite_python_shims(python_executable, root_dir)
-        shim_path = File.join(root_dir, "install","bin")
-        if !File.exist?(shim_path)
-            FileUtils.mkdir_p shim_path
-            Autoproj.warn "Rock.rewrite_python_shims: creating "\
-                "#{shim_path} - "\
-                "are you operating on a valid autoproj workspace?"
-        end
-
-        python_path = File.join(shim_path, 'python')
-        File.open(python_path, 'w') do |io|
-            io.puts "#! /bin/sh"
-            io.puts "exec #{python_executable} \"$@\""
-        end
-        FileUtils.chmod 0755, python_path
-        python_path
-    end
-
-    def self.rewrite_pip_shims(python_executable, root_dir)
-        shim_path = File.join(root_dir, "install","bin")
-        if !File.exist?(shim_path)
-            FileUtils.mkdir_p shim_path
-            Autoproj.warn "Rock.rewrite_pip_shims: creating "\
-                "#{shim_path} - "\
-                "are you operating on a valid autoproj workspace?"
-        end
-        pip_path = File.join(shim_path, 'pip')
-        File.open(pip_path, 'w') do |io|
-            io.puts "#! /bin/sh"
-            io.puts "exec #{python_executable} -m pip \"$@\""
-        end
-        FileUtils.chmod 0755, pip_path
-        pip_path
+    def self.rewrite_python_shims(python_executable, root_dir)      #TODO rename
+        #python_path = File.join(shim_path, 'python')
+        # TODO make venv-path configurable
+        python_executable = get_python_from_config.first
+        Autobuild::Subprocess.run "config", "foo", python_executable, "-m", "venv", File.join(root_dir, "install", "venv"), "--system-site-packages"
     end
 
     # Activate configuration for python in the autoproj configuration
@@ -241,9 +213,10 @@ module Rock
         ws.config.set('python_version', version, true)
 
         ws.osdep_suffixes << "python#{$1}" if version =~ /^([0-9]+)\./
-
+        
         rewrite_python_shims(bin, ws.root_dir)
-        rewrite_pip_shims(bin, ws.root_dir)
+        Autoproj.env_add "VIRTUAL_ENV_DISABLE_PROMPT", "1"
+        Autoproj.env.source_after File.join(ws.root_dir, "install", "venv", "bin", "activate")
         [bin, version]
     end
 
