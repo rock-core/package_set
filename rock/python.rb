@@ -191,10 +191,11 @@ module Rock
             venv_path = File.join(prefix_dir, "install", "venv")
             if File.exist?(venv_path)
                 FileUtils.rm_r venv_path
+                ws.config.delete("PYTHON_VENV_FOLDER")
             end
         end
 
-        def self.enable_venv(python_executable, prefix_dir)
+        def self.create_venv(prefix_dir)
             #python_path = File.join(shim_path, 'python')
             # TODO make venv-path configurable
 
@@ -214,8 +215,9 @@ module Rock
             ws.osdep_suffixes << "python#{$1}" if version =~ /^([0-9]+)\./
             
             rewrite_python_shims(bin, ws.root_dir)
-            Autoproj.env_add "VIRTUAL_ENV_DISABLE_PROMPT", "1"
+            #Autoproj.env_add "VIRTUAL_ENV_DISABLE_PROMPT", "1"
             Autoproj.env.source_after File.join(ws.root_dir, "install", "venv", "bin", "activate")
+
             [File.join(ws.root_dir, "install", "venv", "bin", "python"), version]
         end
 
@@ -365,10 +367,17 @@ module Rock
                                   doc: ["Use Python venv (required from Ubuntu 24)"]
 
                 if ws.config.get("USE_PYTHON_VENV")
+                    # create the actual venv, if not created before
+                    unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
+                        puts "creating python venv in " + ws.root_dir
+                        create_venv(ws.root_dir)
+                        ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
+                    end
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     activate_python_venv(ws: ws)
                     ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
+                    # tell autoproj/autobuild where the venv is
                     ws.env.set "PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                     ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                 else
