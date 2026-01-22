@@ -1,6 +1,8 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
+require "fileutils"
+
 unless (root = ENV["RUBOCOP_VERSION_MANAGER_ROOT"])
     raise "set RUBOCOP_VERSION_MANAGER_ROOT and try again"
 end
