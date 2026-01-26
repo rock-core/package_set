@@ -362,8 +362,9 @@ module Rock
                 ws.config.declare "python_executable", "string",
                                   default: python_bin.to_s,
                                   doc: ["Select the path to the python executable"]
+                os_names, os_versions = Autoproj.workspace.operating_system
                 ws.config.declare "USE_PYTHON_VENV", "boolean",
-                                  default: "no",
+                                  default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
                                   doc: ["Use Python venv (required from Ubuntu 24)"]
 
                 if ws.config.get("USE_PYTHON_VENV")
