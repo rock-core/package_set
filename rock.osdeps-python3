@@ -71,6 +71,9 @@ python3-setuptools:
     opensuse: python3-setuptools
     gentoo: dev-python/setuptools
 
+python3-venv:
+    debian,ubuntu: python3-venv
+
 cython3:
     debian, ubuntu: cython3
     opensuse: python3-Cython

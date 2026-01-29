@@ -372,6 +372,7 @@ module Rock
                         puts "creating python venv in " + ws.root_dir
                         create_venv(ws.root_dir)
                         ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
+                        ws.install_os_packages(["python-venv"], all: nil)
                     end
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
