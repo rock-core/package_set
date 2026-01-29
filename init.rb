@@ -56,7 +56,6 @@ require File.join(__dir__, 'rock/flavor_definition')
 require File.join(__dir__, 'rock/flavor_manager')
 require File.join(__dir__, 'rock/in_flavor_context')
 require File.join(__dir__, 'rock/current_release')
-require File.join(__dir__, 'rock/python')
 
 Rock.flavors.define 'stable'
 Rock.flavors.alias 'stable', 'next'
@@ -173,8 +172,6 @@ end
 if Autobuild.macos?
     Autobuild::Orogen.transports.delete("mqueue")
 end
-
-Rock.setup_python_configuration_options
 
 Autoproj.config.declare 'syskit_use_bundles', 'boolean',
     default: true,
