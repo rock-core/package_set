@@ -200,7 +200,7 @@ module Rock
             # TODO make venv-path configurable
 
             python_executable = get_python_from_config.first
-            Autobuild::Subprocess.run "config", "foo", python_executable, "-m", "venv", File.join(prefix_dir, "install", "venv"), "--system-site-packages"
+            Autobuild::Subprocess.run "config", "create_venv", python_executable, "-m", "venv", File.join(prefix_dir, "install", "venv"), "--system-site-packages"
         end
         
         # Activate configuration for python in the autoproj configuration
@@ -362,8 +362,9 @@ module Rock
                 ws.config.declare "python_executable", "string",
                                   default: python_bin.to_s,
                                   doc: ["Select the path to the python executable"]
+                os_names, os_versions = Autoproj.workspace.operating_system
                 ws.config.declare "USE_PYTHON_VENV", "boolean",
-                                  default: "no",
+                                  default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
                                   doc: ["Use Python venv (required from Ubuntu 24)"]
 
                 if ws.config.get("USE_PYTHON_VENV")
@@ -383,6 +384,9 @@ module Rock
                     ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                 else
                     activate_python(ws: ws)
+                    python_executable = get_python_from_config.first
+                    puts "Upgrading pip"
+                    Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
                 end
             else
                 deactivate_python(ws: ws)
