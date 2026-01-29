@@ -388,7 +388,7 @@ module Rock
             end
         end
 
-        def check_init_venv()
+        def self.check_init_venv()
             unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
                 puts "creating python venv in " + ws.root_dir
                 create_venv(ws.root_dir)
