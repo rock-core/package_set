@@ -377,9 +377,6 @@ module Rock
                     ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                 else
                     activate_python(ws: ws)
-                    python_executable = get_python_from_config.first
-                    puts "Upgrading pip"
-                    Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
                 end
             else
                 deactivate_python(ws: ws)
@@ -394,5 +391,13 @@ module Rock
                 create_venv(ws.root_dir)
                 ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
             end
+        end
+
+        def self.upgrade_pip(ws: Autoproj.workspace)
+            return if ws.config.get("USE_PYTHON_VENV")
+            ws.install_os_packages(["python-pip"])
+            python_executable = get_python_from_config.first
+            puts "Upgrading pip"
+            Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
         end
 end
