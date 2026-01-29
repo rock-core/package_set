@@ -352,6 +352,17 @@ module Rock
                               default: "no",
                               doc: ["Do you want to activate python?"]
 
+            ws.config.declare "python_executable", "string",
+                              default: python_bin.to_s,
+                              doc: ["Select the path to the python executable"]
+            os_names, os_versions = Autoproj.workspace.operating_system
+            ws.config.declare "USE_PYTHON_VENV", "boolean",
+                              default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
+                              doc: ["Use Python venv (required from Ubuntu 24)"]
+        end
+
+        def init_python(ws: Autoproj.workspace)
+
             if ws.config.get("USE_PYTHON")
                 unless ws.config.has_value_for?("python_executable")
                     remove_python_shims(ws.dot_autoproj_dir)
@@ -359,40 +370,30 @@ module Rock
                     python_bin, = auto_resolve_python(ws: ws)
                 end
 
-                ws.config.declare "python_executable", "string",
-                                  default: python_bin.to_s,
-                                  doc: ["Select the path to the python executable"]
-                os_names, os_versions = Autoproj.workspace.operating_system
-                ws.config.declare "USE_PYTHON_VENV", "boolean",
-                                  default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
-                                  doc: ["Use Python venv (required from Ubuntu 24)"]
+                if ws.config.get("USE_PYTHON_VENV")
+                    # create the actual venv, if not created before
+                    unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
+                        puts "creating python venv in " + ws.root_dir
+                        create_venv(ws.root_dir)
+                        ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
+                        ws.install_os_packages(["python-venv"])
+                    end
+                    remove_python_shims(ws.dot_autoproj_dir)
+                    remove_pip_shims(ws.dot_autoproj_dir)
+                    activate_python_venv(ws: ws)
+                    ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
+                    # tell autoproj/autobuild where the venv is
+                    ws.env.set "PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
+                    ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
+                else
+                    activate_python(ws: ws)
+                    python_executable = get_python_from_config.first
+                    puts "Upgrading pip"
+                    Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
+                end
             else
                 deactivate_python(ws: ws)
             end
         end
 
-        def init_python(ws: Autoproj.workspace)
-            if ws.config.get("USE_PYTHON_VENV")
-                # create the actual venv, if not created before
-                unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
-                    puts "creating python venv in " + ws.root_dir
-                    create_venv(ws.root_dir)
-                    ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
-                    ws.install_os_packages(["python-venv"], all: nil)
-                end
-                remove_python_shims(ws.dot_autoproj_dir)
-                remove_pip_shims(ws.dot_autoproj_dir)
-                activate_python_venv(ws: ws)
-                ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
-                # tell autoproj/autobuild where the venv is
-                ws.env.set "PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
-                ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
-            else
-                activate_python(ws: ws)
-                python_executable = get_python_from_config.first
-                puts "Upgrading pip"
-                Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
-            end
-
-        end
 end
