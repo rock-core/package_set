@@ -351,33 +351,25 @@ module Rock
             ws.config.declare "USE_PYTHON", "boolean",
                               default: "no",
                               doc: ["Do you want to activate python?"]
-            python_bin = auto_resolve_python(ws: ws)
-            ws.config.declare "python_executable", "string",
-                              default: python_bin.to_s,
-                              doc: ["Select the path to the python executable"]
-            os_names, os_versions = Autoproj.workspace.operating_system
-            ws.config.declare "USE_PYTHON_VENV", "boolean",
-                              default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
-                              doc: ["Use Python venv (required from Ubuntu 24)"]
-        end
-
-        def init_python(ws: Autoproj.workspace)
 
             if ws.config.get("USE_PYTHON")
                 unless ws.config.has_value_for?("python_executable")
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
-                    python_bin = auto_resolve_python(ws: ws)
+                    python_bin, = auto_resolve_python(ws: ws)
                 end
+
+                ws.config.declare "python_executable", "string",
+                                  default: python_bin.to_s,
+                                  doc: ["Select the path to the python executable"]
+                os_names, os_versions = Autoproj.workspace.operating_system
+                ws.config.declare "USE_PYTHON_VENV", "boolean",
+                                  default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
+                                  doc: ["Use Python venv (required from Ubuntu 24)"]
 
                 if ws.config.get("USE_PYTHON_VENV")
                     # create the actual venv, if not created before
-                    unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
-                        puts "creating python venv in " + ws.root_dir
-                        create_venv(ws.root_dir)
-                        ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
-                        ws.install_os_packages(["python-venv"])
-                    end
+  
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     activate_python_venv(ws: ws)
@@ -396,4 +388,12 @@ module Rock
             end
         end
 
+        def check_init_venv()
+            unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
+                puts "creating python venv in " + ws.root_dir
+                create_venv(ws.root_dir)
+                ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
+                ws.install_os_packages(["python-venv"])
+            end
+        end
 end
