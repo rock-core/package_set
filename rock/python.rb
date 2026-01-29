@@ -215,7 +215,7 @@ module Rock
             ws.osdep_suffixes << "python#{$1}" if version =~ /^([0-9]+)\./
             
             rewrite_python_shims(bin, ws.root_dir)
-            #Autoproj.env_add "VIRTUAL_ENV_DISABLE_PROMPT", "1"
+            Autoproj.env_add "VIRTUAL_ENV_DISABLE_PROMPT", "1"
             Autoproj.env.source_after File.join(ws.root_dir, "install", "venv", "bin", "activate")
 
             [File.join(ws.root_dir, "install", "venv", "bin", "python"), version]
