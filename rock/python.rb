@@ -369,7 +369,12 @@ module Rock
 
                 if ws.config.get("USE_PYTHON_VENV")
                     # create the actual venv, if not created before
-  
+                    unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
+                        puts "creating python venv in " + ws.root_dir
+                        create_venv(ws.root_dir)
+                        ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
+                        ws.install_os_packages(["python-venv"])
+                    end
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     activate_python_venv(ws: ws)
@@ -389,11 +394,6 @@ module Rock
         end
 
         def self.check_init_venv(ws: Autoproj.workspace)
-            unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
-                puts "creating python venv in " + ws.root_dir
-                create_venv(ws.root_dir)
-                ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
-                ws.install_os_packages(["python-venv"])
-            end
+
         end
 end
