@@ -351,7 +351,7 @@ module Rock
             ws.config.declare "USE_PYTHON", "boolean",
                               default: "no",
                               doc: ["Do you want to activate python?"]
-
+            python_bin = auto_resolve_python(ws: ws)
             ws.config.declare "python_executable", "string",
                               default: python_bin.to_s,
                               doc: ["Select the path to the python executable"]
@@ -367,7 +367,7 @@ module Rock
                 unless ws.config.has_value_for?("python_executable")
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
-                    python_bin, = auto_resolve_python(ws: ws)
+                    python_bin = auto_resolve_python(ws: ws)
                 end
 
                 if ws.config.get("USE_PYTHON_VENV")
