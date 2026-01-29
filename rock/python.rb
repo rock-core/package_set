@@ -390,9 +390,9 @@ module Rock
             # create the actual venv, if not created before
             unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
                 puts "creating python venv in " + ws.root_dir
+                ws.install_os_packages(["python-venv"])
                 create_venv(ws.root_dir)
                 ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
-                ws.install_os_packages(["python-venv"])
             end
         end
 end
