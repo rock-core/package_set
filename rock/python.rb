@@ -389,8 +389,22 @@ module Rock
                 puts "creating python venv in " + ws.root_dir
                 ws.install_os_packages(["python-venv"])
                 create_venv(ws.root_dir)
+
+                if ws.config.has_value_for?("PYTHON_VENV_UPGRADE_PIP") then
+                    puts "upgrading pip in venv"
+                    upgrade_pip_in_venv
+                end
+
                 ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
             end
+        end
+
+        def self.upgrade_pip_in_venv(ws: Autoproj.workspace)
+            return if ws.config.get("USE_PYTHON_VENV")
+            ws.install_os_packages(["python-pip"])
+            python_executable = get_python_from_config.first
+            puts "Upgrading pip in venv"
+            Autobuild::Subprocess.run "config", "upgrade_pip", "source", "install/venv/bin/activate", "; ", python_executable, "-m", "pip", "install", "--upgrade", "pip"
         end
 
         def self.upgrade_pip(ws: Autoproj.workspace)
