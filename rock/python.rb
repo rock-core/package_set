@@ -108,24 +108,12 @@ module Rock
         #      are fulfilled nil otherwise
 
         def self.get_python_from_config(ws: Autoproj.workspace, version: nil)
-            config_bin = ws.config.get("python_executable", nil)
-            return unless config_bin
-
-            config_version = ws.config.get("python_version", nil)
-            config_version ||= get_python_version(config_bin)
-
-            # If a version constraint is given, ensure fulfillment
-            if validate_version(config_version, version)
-                [config_bin, config_version]
-            else
-                raise "python_executable in autoproj config with " \
-                      "version '#{config_version}' does not match "\
-                      "version constraints '#{version}'"
+            if ws.config.has_value_for?("python_executable")
+                config_bin = ws.config.get("python_executable", nil)
+            elsif ws.config.has_value_for?("python_initial_executable")
+                # we are in setup phase where no python_executable is set
+                config_bin = ws.config.get("python_initial_executable", nil)
             end
-        end
-
-        def self.get_python_from_init(ws: Autoproj.workspace, version: nil)
-            config_bin = ws.config.get("python_initial_executable", nil)
             return unless config_bin
 
             config_version = ws.config.get("python_version", nil)
@@ -158,7 +146,6 @@ module Rock
             version_constraint = version
             resolvers = [
                 -> { get_python_from_config(ws: ws, version: version_constraint) },
-                -> { get_python_from_init(ws: ws, version: version_constraint) },
                 -> { find_python(ws: ws, version: version_constraint) }
             ]
 
@@ -352,6 +339,7 @@ module Rock
                 ws.config.declare "python_initial_executable", "string",
                                   default: python_bin.to_s,
                                   doc: ["Select the path to the initial python executable"]
+                
                 os_names, os_versions = Autoproj.workspace.operating_system
                 ws.config.declare "USE_PYTHON_VENV", "boolean",
                                   default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
@@ -361,15 +349,21 @@ module Rock
                 python_initial_executable = ws.config.get("python_initial_executable")
 
                 if ws.config.get("USE_PYTHON_VENV")
-                    remove_python_shims(ws.dot_autoproj_dir)
-                    remove_pip_shims(ws.dot_autoproj_dir)
-                    activate_python_venv(ws: ws)
-                    ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
+
+                    # set folder location  (even if venv not created yet)
+                    venv_folder = File.join(ws.root_dir, "install", "venv")
+                    ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
                     # set actual python_executable (even if venv not created yet)
                     python_executable_basename = File.basename(python_initial_executable)
                     python_executable_venv = File.join(venv_folder, "bin", python_executable_basename)
                     ws.config.set("python_executable", python_executable_venv)
+
+                    remove_python_shims(ws.dot_autoproj_dir)
+                    remove_pip_shims(ws.dot_autoproj_dir)
+                    activate_python_venv(ws: ws)
+
                     # tell autoproj/autobuild where the venv is
+                    ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
                     ws.env.set "PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                     ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                 else
@@ -387,15 +381,9 @@ module Rock
             unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
                 puts "creating python venv in " + ws.root_dir
                 ws.install_os_packages(["python-venv"])
-                
                 # TODO make venv-path configurable
                 python_initial_executable = ws.config.get("python_initial_executable")
                 Autobuild::Subprocess.run "config", "create_venv", python_initial_executable, "-m", "venv", File.join(ws.root_dir, "install", "venv"), "--system-site-packages"
-
-                venv_folder = File.join(ws.root_dir, "install", "venv")
-                ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
-
-
             end
 
         end
