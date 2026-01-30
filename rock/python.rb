@@ -222,9 +222,8 @@ module Rock
         end
 
 
-        ### TODO REWRITE
         def self.get_python_from_venv(ws: Autoproj.workspace, version: nil)
-            config_bin = ws.config.get("python_executable", nil)
+            config_bin = ws.config.get("PYTHON_VENV_EXECUTABLE", nil)
             return unless config_bin
 
             config_version = ws.config.get("python_version", nil)
