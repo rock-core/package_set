@@ -396,7 +396,7 @@ module Rock
                 ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
 
                 # switch python_executable
-                python_executable_init = ws.config.get("python_executable", nil)
+                python_executable_init = ws.config.get("python_executable")
                 python_executable_basename = File.basename(python_executable_init)
                 ws.config.set("python_executable", File.join(venv_folder, "bin", python_executable_basename))
                 ws.config.set("PYTHON_VENV_INIT_EXECUTABLE", python_executable_init)
