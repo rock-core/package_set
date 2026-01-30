@@ -345,10 +345,6 @@ module Rock
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     activate_python_venv(ws: ws)
-                    
-                    # set python_executable to have it defined (and not asked for)
-                    python_initial_executable = ws.config.get("python_initial_executable")
-                    ws.config.set("python_executable", python_initial_executable)
 
                     ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
                     # tell autoproj/autobuild where the venv is
