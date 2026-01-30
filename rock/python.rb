@@ -296,7 +296,7 @@ module Rock
             bin: nil,
             version: nil)
             bin, version = resolve_python(ws: ws, bin: bin, version: version)
-            ws.config.set("python_executable", bin, true)
+            ws.config.set("python_initial_executable", bin, true)
             ws.config.set("python_version", version, true)
 
             ws.osdep_suffixes << "python#{$1}" if version =~ /^([0-9]+)\./
@@ -361,15 +361,15 @@ module Rock
                     python_bin, = auto_resolve_python(ws: ws)
                 end
 
-                ws.config.declare "python_executable", "string",
+                ws.config.declare "python_initial_executable", "string",
                                   default: python_bin.to_s,
-                                  doc: ["Select the path to the python executable"]
+                                  doc: ["Select the path to the initial python executable"]
                 os_names, os_versions = Autoproj.workspace.operating_system
                 ws.config.declare "USE_PYTHON_VENV", "boolean",
                                   default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
                                   doc: ["Use Python venv (required from Ubuntu 24)"]
 
-                if ws.config.get("USE_PYTHON_VENV")  
+                if ws.config.get("USE_PYTHON_VENV")
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     activate_python_venv(ws: ws)
@@ -379,6 +379,7 @@ module Rock
                     ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                 else
                     activate_python(ws: ws)
+                    ws.config.set("python_executable", ws.config.get("python_initial_executable"))
                 end
             else
                 deactivate_python(ws: ws)
@@ -396,12 +397,12 @@ module Rock
                 ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
 
                 # switch python_executable
-                python_executable_init = get_python_from_config.first
-                python_executable_basename = File.basename(python_executable_init)
+                python_initial_executable = ws.config.get("python_initial_executable")
+                python_executable_basename = File.basename(python_initial_executable)
                 python_executable_venv = File.join(venv_folder, "bin", python_executable_basename)
                 ws.config.set("python_executable", python_executable_venv)
-                ws.config.set("PYTHON_VENV_INIT_EXECUTABLE", python_executable_init)
             end
+
         end
 
         def self.check_upgrade_pip(ws: Autoproj.workspace)
