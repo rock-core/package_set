@@ -124,6 +124,27 @@ module Rock
             end
         end
 
+        def self.get_python_from_bootstrap(ws: Autoproj.workspace, version: nil)
+            if ws.config.get("USE_PYTHON_VENV") == true then
+                config_bin = ws.config.get("PYTHON_VENV_INIT_EXECUTABLE", nil)
+                return unless config_bin
+
+                config_version = ws.config.get("python_version", nil)
+                config_version ||= get_python_version(config_bin)
+
+                # If a version constraint is given, ensure fulfillment
+                if validate_version(config_version, version)
+                    [config_bin, config_version]
+                else
+                    raise "python_executable in autoproj config with " \
+                          "version '#{config_version}' does not match "\
+                          "version constraints '#{version}'"
+                end
+            else
+                get_python_from_config(ws, version)
+            end
+        end
+
         def self.custom_resolve_python(bin: nil,
             version: nil)
             version, valid = validate_python_version(bin, version)
@@ -140,8 +161,8 @@ module Rock
             version: nil)
             version_constraint = version
             resolvers = [
-                -> { get_python_from_venv(ws: ws, version: version_constraint) },
                 -> { get_python_from_config(ws: ws, version: version_constraint) },
+                -> { get_python_from_bootstrap(ws: ws, version: version_constraint) }
                 -> { find_python(ws: ws, version: version_constraint) }
             ]
 
@@ -219,24 +240,6 @@ module Rock
             Autoproj.env.source_after File.join(ws.root_dir, "install", "venv", "bin", "activate")
 
             [File.join(ws.root_dir, "install", "venv", "bin", "python"), version]
-        end
-
-
-        def self.get_python_from_venv(ws: Autoproj.workspace, version: nil)
-            config_bin = ws.config.get("PYTHON_VENV_EXECUTABLE", nil)
-            return unless config_bin
-
-            config_version = ws.config.get("python_version", nil)
-            config_version ||= get_python_version(config_bin)
-
-            # If a version constraint is given, ensure fulfillment
-            if validate_version(config_version, version)
-                [config_bin, config_version]
-            else
-                raise "python_executable in autoproj config with " \
-                      "version '#{config_version}' does not match "\
-                      "version constraints '#{version}'"
-            end
         end
 
         #### end of venv additions
@@ -391,8 +394,12 @@ module Rock
 
                 venv_folder = File.join(ws.root_dir, "install", "venv")
                 ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
-                python_executable_basename = File.basename(get_python_from_config.first)
-                ws.config.set("PYTHON_VENV_EXECUTABLE", File.join(venv_folder, "bin", python_executable_basename))
+
+                # switch python_executable
+                python_executable_init = ws.config.get("python_executable", nil)
+                python_executable_basename = File.basename(python_executable_init)
+                ws.config.set("python_executable", File.join(venv_folder, "bin", python_executable_basename))
+                ws.config.set("PYTHON_VENV_INIT_EXECUTABLE", python_executable_init)
 
                 if ws.config.has_value_for?("PYTHON_VENV_UPGRADE_PIP") && ws.config.get("PYTHON_VENV_UPGRADE_PIP") == true then
                     puts "upgrading pip in venv"
@@ -402,7 +409,7 @@ module Rock
         end
 
         def self.upgrade_pip_in_venv(ws: Autoproj.workspace)
-            python_venv_executable = get_python_from_venv.first
+            python_venv_executable = get_python_from_config.first
             Autobuild::Subprocess.run "config", "upgrade_pip", python_venv_executable, "-m", "pip", "install", "--upgrade", "pip"
         end
 
