@@ -403,9 +403,10 @@ module Rock
             return if ws.config.get("USE_PYTHON_VENV")
             ws.install_os_packages(["python-pip"])
             python_executable = get_python_from_config.first
-            puts "Upgrading pip in venv"
+            
             cmd = ". " + ws.root_dir + "/install/venv/bin/activate; "+python_executable+" -m pip install --upgrade pip"
-            puts cmd
+            puts "Upgrading pip in venv: " + cmd
+
             Autobuild::Subprocess.run "config", "upgrade_pip", "/bin/bash", "-c", cmd
         end
 
