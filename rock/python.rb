@@ -124,24 +124,20 @@ module Rock
             end
         end
 
-        def self.get_python_from_bootstrap(ws: Autoproj.workspace, version: nil)
-            if ws.config.get("USE_PYTHON_VENV") == true then
-                config_bin = ws.config.get("PYTHON_VENV_INIT_EXECUTABLE", nil)
-                return unless config_bin
+        def self.get_python_from_init(ws: Autoproj.workspace, version: nil)
+            config_bin = ws.config.get("python_initial_executable", nil)
+            return unless config_bin
 
-                config_version = ws.config.get("python_version", nil)
-                config_version ||= get_python_version(config_bin)
+            config_version = ws.config.get("python_version", nil)
+            config_version ||= get_python_version(config_bin)
 
-                # If a version constraint is given, ensure fulfillment
-                if validate_version(config_version, version)
-                    [config_bin, config_version]
-                else
-                    raise "python_executable in autoproj config with " \
-                          "version '#{config_version}' does not match "\
-                          "version constraints '#{version}'"
-                end
+            # If a version constraint is given, ensure fulfillment
+            if validate_version(config_version, version)
+                [config_bin, config_version]
             else
-                get_python_from_config(ws, version)
+                raise "python_executable in autoproj config with " \
+                      "version '#{config_version}' does not match "\
+                      "version constraints '#{version}'"
             end
         end
 
@@ -162,7 +158,7 @@ module Rock
             version_constraint = version
             resolvers = [
                 -> { get_python_from_config(ws: ws, version: version_constraint) },
-                -> { get_python_from_bootstrap(ws: ws, version: version_constraint) },
+                -> { get_python_from_init(ws: ws, version: version_constraint) },
                 -> { find_python(ws: ws, version: version_constraint) }
             ]
 
@@ -347,7 +343,7 @@ module Rock
                               doc: ["Do you want to activate python?"]
 
             if ws.config.get("USE_PYTHON")
-                unless ws.config.has_value_for?("python_executable")
+                unless ws.config.has_value_for?("python_initial_executable")
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     python_bin, = auto_resolve_python(ws: ws)
@@ -386,7 +382,7 @@ module Rock
                 
                 # TODO make venv-path configurable
                 python_initial_executable = ws.config.get("python_initial_executable")
-                Autobuild::Subprocess.run "config", "create_venv", python_initial_executable, "-m", "venv", File.join(prefix_dir, "install", "venv"), "--system-site-packages"
+                Autobuild::Subprocess.run "config", "create_venv", python_initial_executable, "-m", "venv", File.join(ws.root_dir, "install", "venv"), "--system-site-packages"
 
                 venv_folder = File.join(ws.root_dir, "install", "venv")
                 ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
