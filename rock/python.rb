@@ -342,20 +342,16 @@ module Rock
 
 
                 if ws.config.get("USE_PYTHON_VENV")
-                    # set folder location  (even if venv not created yet)
-                    venv_folder = File.join(ws.root_dir, "install", "venv")
-                    ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
-                    
-                    # set actual python_executable (even if venv not created yet)
-                    python_initial_executable = ws.config.get("python_initial_executable")
-                    ws.config.get("python_executable", python_initial_executable)
-
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     activate_python_venv(ws: ws)
+                    
+                    # set python_executable to have it defined (and not asked for)
+                    python_initial_executable = ws.config.get("python_initial_executable")
+                    ws.config.set("python_executable", python_initial_executable)
 
-                    # tell autoproj/autobuild where the venv is
                     ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
+                    # tell autoproj/autobuild where the venv is
                     ws.env.set "PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                     ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                 else
@@ -375,13 +371,14 @@ module Rock
                 python_initial_executable = ws.config.get("python_initial_executable")
                 Autobuild::Subprocess.run "config", "create_venv", python_initial_executable, "-m", "venv", File.join(ws.root_dir, "install", "venv"), "--system-site-packages"
 
+                # set folder location
+                venv_folder = File.join(ws.root_dir, "install", "venv")
+                ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
+
                 #read the init executable and overwrite python_executable
                 python_executable_basename = File.basename(python_initial_executable)
                 python_executable_venv = File.join(venv_folder, "bin", python_executable_basename)
                 ws.config.set("python_executable", python_executable_venv)
-                
-                
-
             end
 
         end
