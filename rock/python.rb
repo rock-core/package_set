@@ -346,7 +346,7 @@ module Rock
                 unless ws.config.has_value_for?("python_initial_executable")
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
-                    python_bin, = auto_resolve_python(ws: ws)
+                    python_bin, = ws.config.get("python_initial_executable")
                 end
 
                 ws.config.declare "python_initial_executable", "string",
