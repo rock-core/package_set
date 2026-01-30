@@ -404,7 +404,7 @@ module Rock
             ws.install_os_packages(["python-pip"])
             python_executable = get_python_from_config.first
             puts "Upgrading pip in venv"
-            Autobuild::Subprocess.run "config", "upgrade_pip", "/bin/bash", "-c", ". ./install/venv/bin/activate; python3 -m pip install --upgrade pip"md
+            Autobuild::Subprocess.run "config", "upgrade_pip", "/bin/bash", "-c", ". ./install/venv/bin/activate; python3 -m pip install --upgrade pip"
         end
 
         def self.upgrade_pip(ws: Autoproj.workspace)
