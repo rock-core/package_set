@@ -346,7 +346,7 @@ module Rock
                 unless ws.config.has_value_for?("python_initial_executable")
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
-                    python_bin, = ws.config.get("python_initial_executable")
+                    python_bin, = auto_resolve_python(ws: ws)
                 end
 
                 ws.config.declare "python_initial_executable", "string",
@@ -357,17 +357,25 @@ module Rock
                                   default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
                                   doc: ["Use Python venv (required from Ubuntu 24)"]
 
+                #read the init executable
+                python_initial_executable = ws.config.get("python_initial_executable")
+
                 if ws.config.get("USE_PYTHON_VENV")
                     remove_python_shims(ws.dot_autoproj_dir)
                     remove_pip_shims(ws.dot_autoproj_dir)
                     activate_python_venv(ws: ws)
                     ws.env.add "PATH", File.join(ws.root_dir, "install", "venv", "bin")
+                    # set actual python_executable (even if venv not created yet)
+                    python_executable_basename = File.basename(python_initial_executable)
+                    python_executable_venv = File.join(venv_folder, "bin", python_executable_basename)
+                    ws.config.set("python_executable", python_executable_venv)
                     # tell autoproj/autobuild where the venv is
                     ws.env.set "PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                     ws.env.set "AUTOPROJ_PYTHONUSERBASE", File.join(ws.root_dir, "install", "venv")
                 else
                     activate_python(ws: ws)
-                    ws.config.set("python_executable", ws.config.get("python_initial_executable"))
+                    # set actual python_executable
+                    ws.config.set("python_executable", python_initial_executable)
                 end
             else
                 deactivate_python(ws: ws)
@@ -387,10 +395,7 @@ module Rock
                 venv_folder = File.join(ws.root_dir, "install", "venv")
                 ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
 
-                # set python_executable
-                python_executable_basename = File.basename(python_initial_executable)
-                python_executable_venv = File.join(venv_folder, "bin", python_executable_basename)
-                ws.config.set("python_executable", python_executable_venv)
+
             end
 
         end
