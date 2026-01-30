@@ -390,12 +390,12 @@ module Rock
                 ws.install_os_packages(["python-venv"])
                 create_venv(ws.root_dir)
 
+                ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
+
                 if ws.config.has_value_for?("PYTHON_VENV_UPGRADE_PIP") then
                     puts "upgrading pip in venv"
                     upgrade_pip_in_venv
                 end
-
-                ws.config.set("PYTHON_VENV_FOLDER", File.join(ws.root_dir, "install", "venv"))
             end
         end
 
@@ -405,7 +405,6 @@ module Rock
             venv_folder = ws.config.get("PYTHON_VENV_FOLDER")
             cmd = ". " + File.join(ws.root_dir, venv_folder, "bin", "activate") + "; " + python_executable + " -m pip install --upgrade pip"
             puts "Upgrading pip in venv: " + cmd
-
             Autobuild::Subprocess.run "config", "upgrade_pip", "/bin/bash", "-c", cmd
         end
 
