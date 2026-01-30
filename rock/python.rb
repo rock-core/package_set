@@ -401,15 +401,14 @@ module Rock
                 python_executable_venv = File.join(venv_folder, "bin", python_executable_basename)
                 ws.config.set("python_executable", python_executable_venv)
                 ws.config.set("PYTHON_VENV_INIT_EXECUTABLE", python_executable_init)
-
-                if ws.config.has_value_for?("PYTHON_VENV_UPGRADE_PIP") && ws.config.get("PYTHON_VENV_UPGRADE_PIP") == true then
-                    puts "upgrading pip in venv"
-                    upgrade_pip(python_executable_venv)
-                end
             end
         end
 
-        def self.upgrade_pip(python_executable, ws: Autoproj.workspace)
-            Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
+        def self.check_upgrade_pip(ws: Autoproj.workspace)
+            if ws.config.has_value_for?("PYTHON_UPGRADE_PIP") && ws.config.get("PYTHON_UPGRADE_PIP") == true then
+                python_executable = get_python_from_config.first
+                Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
+                ws.config.get("PYTHON_UPGRADE_PIP", false)
+            end
         end
 end
