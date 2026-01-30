@@ -205,12 +205,12 @@ module Rock
                                  bin: nil,
                                  version: nil)
             bin, version = resolve_python(ws: ws, bin: bin, version: version)
-            ws.config.set('python_executable', bin, true)
+            # ws.config.set('python_executable', bin, true)
             ws.config.set('python_version', version, true)
     
             ws.osdep_suffixes << "python#{$1}" if version =~ /^([0-9]+)\./
             
-            rewrite_python_shims(bin, ws.root_dir)
+            # rewrite_python_shims(bin, ws.root_dir)
             Autoproj.env_add "VIRTUAL_ENV_DISABLE_PROMPT", "1"
             Autoproj.env.source_after File.join(ws.root_dir, "install", "venv", "bin", "activate")
 
