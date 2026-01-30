@@ -162,7 +162,7 @@ module Rock
             version_constraint = version
             resolvers = [
                 -> { get_python_from_config(ws: ws, version: version_constraint) },
-                -> { get_python_from_bootstrap(ws: ws, version: version_constraint) }
+                -> { get_python_from_bootstrap(ws: ws, version: version_constraint) },
                 -> { find_python(ws: ws, version: version_constraint) }
             ]
 
