@@ -402,7 +402,7 @@ module Rock
         end
 
         def self.upgrade_pip_in_venv(ws: Autoproj.workspace)
-            python_venv_executable = get_python_from_venv
+            python_venv_executable = get_python_from_venv.first
             Autobuild::Subprocess.run "config", "upgrade_pip", python_venv_executable, "-m", "pip", "install", "--upgrade", "pip"
         end
 
