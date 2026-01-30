@@ -392,8 +392,8 @@ module Rock
 
                 venv_folder = File.join(ws.root_dir, "install", "venv")
                 ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
-                python_venv_executable = File.basename(get_python_from_config.first)
-                ws.config.set("PYTHON_VENV_EXECUTABLE", File.join(venv_folder, "bin", python_venv_executable)))
+                python_executable_basename = File.basename(get_python_from_config.first)
+                ws.config.set("PYTHON_VENV_EXECUTABLE", File.join(venv_folder, "bin", python_executable_basename))
 
                 if ws.config.has_value_for?("PYTHON_VENV_UPGRADE_PIP") then
                     puts "upgrading pip in venv"
