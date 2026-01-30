@@ -215,14 +215,6 @@ module Rock
                 ws.config.delete("PYTHON_VENV_FOLDER")
             end
         end
-
-        def self.create_venv(prefix_dir)
-            #python_path = File.join(shim_path, 'python')
-            # TODO make venv-path configurable
-
-            python_executable = get_python_from_config.first
-            Autobuild::Subprocess.run "config", "create_venv", python_executable, "-m", "venv", File.join(prefix_dir, "install", "venv"), "--system-site-packages"
-        end
         
         # Activate configuration for python in the autoproj configuration
         # @return [String,String] python path and python version
@@ -391,13 +383,15 @@ module Rock
             unless ws.config.has_value_for?("PYTHON_VENV_FOLDER") && File.exist?(File.join(ws.root_dir, "install", "venv")) then
                 puts "creating python venv in " + ws.root_dir
                 ws.install_os_packages(["python-venv"])
-                create_venv(ws.root_dir)
+                
+                # TODO make venv-path configurable
+                python_initial_executable = ws.config.get("python_initial_executable")
+                Autobuild::Subprocess.run "config", "create_venv", python_initial_executable, "-m", "venv", File.join(prefix_dir, "install", "venv"), "--system-site-packages"
 
                 venv_folder = File.join(ws.root_dir, "install", "venv")
                 ws.config.set("PYTHON_VENV_FOLDER", venv_folder)
 
-                # switch python_executable
-                python_initial_executable = ws.config.get("python_initial_executable")
+                # set python_executable
                 python_executable_basename = File.basename(python_initial_executable)
                 python_executable_venv = File.join(venv_folder, "bin", python_executable_basename)
                 ws.config.set("python_executable", python_executable_venv)
