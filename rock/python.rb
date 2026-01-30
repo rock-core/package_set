@@ -384,7 +384,7 @@ module Rock
         end
 
         def self.check_upgrade_pip(ws: Autoproj.workspace)
-            if ws.config.has_value_for?("PYTHON_UPGRADE_PIP") && ws.config.get("PYTHON_UPGRADE_PIP") == true then
+            if ws.config.has_value_for?("PUSE_PYTHON") && ws.config.has_value_for?("PYTHON_UPGRADE_PIP") && ws.config.get("PYTHON_UPGRADE_PIP") == true then
                 python_executable = get_python_from_config.first
                 Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
                 ws.config.get("PYTHON_UPGRADE_PIP", false)
