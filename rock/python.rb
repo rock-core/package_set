@@ -400,11 +400,10 @@ module Rock
         end
 
         def self.upgrade_pip_in_venv(ws: Autoproj.workspace)
-            return if ws.config.get("USE_PYTHON_VENV")
             ws.install_os_packages(["python-pip"])
             python_executable = get_python_from_config.first
-            
-            cmd = ". " + ws.root_dir + "/install/venv/bin/activate; "+python_executable+" -m pip install --upgrade pip"
+            venv_folder = ws.config.get("PYTHON_VENV_FOLDER")
+            cmd = ". " + File.join(ws.root_dir, venv_folder, "bin", "activate") + "; " + python_executable + " -m pip install --upgrade pip"
             puts "Upgrading pip in venv: " + cmd
 
             Autobuild::Subprocess.run "config", "upgrade_pip", "/bin/bash", "-c", cmd
