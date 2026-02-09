@@ -367,7 +367,11 @@ module Rock
                 os_names, os_versions = Autoproj.workspace.operating_system
                 ws.config.declare "USE_PYTHON_VENV", "boolean",
                                   default: (os_names.include?('ubuntu') && os_versions.include?('24.04') ? "yes" : "no"),
-                                  doc: ["Use Python venv (required from Ubuntu 24)"]
+                                  doc: ["Use Python venv? (required from Ubuntu 24)"]
+
+                ws.config.declare "PYTHON_UPGRADE_PIP", "boolean",
+                                  default: (os_names.include?('ubuntu') && os_versions.include?('20.04') ? "yes" : "no"),
+                                  doc: ["Upgrade pip version? (required before Ubuntu 22.04)"]
 
                 if ws.config.get("USE_PYTHON_VENV")  
                     remove_python_shims(ws.dot_autoproj_dir)
@@ -405,14 +409,11 @@ module Rock
         end
 
         def self.check_upgrade_pip(ws: Autoproj.workspace)
-            if ws.config.has_value_for?("PYTHON_UPGRADE_PIP") && ws.config.get("PYTHON_UPGRADE_PIP") == true then
-                # config has setting to upgrade pip, but just once on bootstrap
-                if !ws.config.has_value_for?("PYTHON_PIP_UPGRADED") then
-                    puts "upgrading pip"
-                    python_executable = get_python_from_config.first
-                    Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
-                    ws.config.set("PYTHON_PIP_UPGRADED", true)
-                end
+            if ws.config.get("PYTHON_UPGRADE_PIP") == true then
+                puts "upgrading pip"
+                python_executable = get_python_from_config.first
+                Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
+                ws.config.set("PYTHON_UPGRADE_PIP", false)
             end
         end
 end
