@@ -406,9 +406,12 @@ module Rock
 
         def self.check_upgrade_pip(ws: Autoproj.workspace)
             if ws.config.has_value_for?("PYTHON_UPGRADE_PIP") && ws.config.get("PYTHON_UPGRADE_PIP") == true then
-                python_executable = get_python_from_config.first
-                Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
-                ws.config.get("PYTHON_UPGRADE_PIP", false)
+                # config has setting to upgrade pip, but just once on bootstrap
+                if !ws.config.has_value_for?("PYTHON_PIP_UPGRADED") || ws.config.get("PYTHON_PIP_UPGRADED") == false then
+                    python_executable = get_python_from_config.first
+                    Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
+                    ws.config.get("PYTHON_PIP_UPGRADED", true)
+                end
             end
         end
 end
