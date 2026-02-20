@@ -412,6 +412,7 @@ module Rock
         def self.check_upgrade_pip(ws: Autoproj.workspace)
             if ws.config.get("PYTHON_UPGRADE_PIP") == true then
                 puts "upgrading pip"
+                ws.install_os_packages(["pip"])
                 python_executable = get_python_from_config.first
                 Autobuild::Subprocess.run "config", "upgrade_pip", python_executable, "-m", "pip", "install", "--upgrade", "pip"
                 ws.config.set("PYTHON_UPGRADE_PIP", false)
