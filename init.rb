@@ -183,7 +183,7 @@ if Autoproj.config.get "PYTHON_UPGRADE_PIP"
             guess_pip_program
             pips = [pips] if pips.is_a?(String)
 
-            upgrade_cmdline = [Autobuild.tool("pip"), "install", "--upgrade", "pip"]
+            upgrade_cmdline = [Autobuild.tool("pip"), "install", "--user", "--upgrade", "pip"]
             base_cmdline = [Autobuild.tool("pip"), "install", "--user"]
 
             cmdlines = [upgrade_cmdline, base_cmdline + pips]
