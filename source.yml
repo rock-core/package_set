@@ -94,6 +94,10 @@ version_control:
       github: msgpack/msgpack-c
       tag: cpp-3.1.1
 
+    - tools/aruba:
+        github: rock-core/aruba
+        branch: forwarded_ios-2.2.0
+
 overrides:
     - ^(orogen|typelib|rtt|utilrb|utilmm|rtt_typelib|tools/metaruby)$:
       branch: $ROCK_BRANCH

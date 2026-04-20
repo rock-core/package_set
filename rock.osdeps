@@ -398,3 +398,5 @@ irb:
   gem: irb
   osdep:
     - yaml
+
+contracts: gem
