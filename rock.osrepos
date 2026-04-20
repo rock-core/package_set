@@ -5,3 +5,9 @@
         - type: key
           keyserver: hkp://keyserver.ubuntu.com:80
           id: 63BBCC76C6D55B7DF2D65B2A78CB407D3E3D8F94
+    - noble:
+        - type: repo
+          repo: deb http://ppa.launchpad.net/rock-core/qt4/ubuntu noble main
+        - type: key
+          keyserver: hkp://keyserver.ubuntu.com:80
+          id: 63BBCC76C6D55B7DF2D65B2A78CB407D3E3D8F94
