@@ -36,3 +36,12 @@ remove_from_default "gui/osg_qt4"
 
 ruby_package "base/ruby_eigen"
 remove_from_default "base/ruby_eigen"
+
+ruby_package "tools/aruba" do |pkg|
+    pkg.rake_setup_task = nil
+    pkg.test_utility.available = false
+
+    pkg.depends_on "contracts"
+end
+
+Autoproj.add_osdeps_overrides "aruba", package: "tools/aruba", force: true

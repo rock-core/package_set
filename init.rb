@@ -38,7 +38,7 @@ if rubocop_gemfile
 end
 Autoproj.env.set "RUBOCOP_CMD", "rubocop-manager"
 
-# Ruby 1.8 is completly outdated, if you modify this, take respect to the addition checks below against 1.9 
+# Ruby 1.8 is completly outdated, if you modify this, take respect to the addition checks below against 1.9
 if defined?(RUBY_VERSION) && (RUBY_VERSION =~ /^1\.8\./)
     Autoproj.error "Ruby 1.8 is not supported by Rock anymore"
     Autoproj.error ""
@@ -82,7 +82,7 @@ current_flavor = Rock.flavors.current_flavor
 
 #This check is needed because the overrides file will override the FLAVOR selection.
 #Furthermore a selection != stable can cause a inconsistent layout (cause by in_flavor system in the package_sets)
-if Rock.in_release? && current_flavor.branch != "stable" 
+if Rock.in_release? && current_flavor.branch != "stable"
     if ENV['ROCK_RC'] == '1'
         Autoproj.warn ""
         Autoproj.warn "Found a release file and the flavor is not master"
@@ -203,3 +203,7 @@ if (sanitizers = Autoproj.config.get("cxx_sanitizers", nil))
     end
 end
 
+Autoproj.env_set(
+    "ROCK_RTT_BUILTIN_TYPEKIT",
+    Autoproj.config.get("rtt_builtin_typekit", true) ? "1" : "0"
+)
