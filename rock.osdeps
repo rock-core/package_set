@@ -402,3 +402,22 @@ irb:
     - yaml
 
 contracts: gem
+
+gtk4-ruby:
+    ubuntu:
+        default:
+        - libgirepository1.0-dev
+        - libcairo2-dev
+        gem:
+        - gtk4
+        - name: json
+          version: "< 3.0"
+
+gtk4-webkit-ruby:
+    ubuntu:
+        default:
+        - libwebkitgtk-6.0-dev
+        gem:
+        - webkit-gtk
+        osdep:
+        - gtk4-ruby
