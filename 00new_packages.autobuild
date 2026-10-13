@@ -45,3 +45,8 @@ ruby_package "tools/aruba" do |pkg|
 end
 
 Autoproj.add_osdeps_overrides "aruba", package: "tools/aruba", force: true
+
+ruby_package "gui/syskit-ui" do |pkg|
+    pkg.test_utility.available = false
+end
+remove_from_default "gui/syskit-ui"
