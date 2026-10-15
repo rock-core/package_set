@@ -112,8 +112,9 @@ overrides:
       github: rock-core/tools-utilrb
     - rtt_typelib:
       github: rock-core/tools-rtt_typelib
-    - metaruby:
+    - tools/metaruby:
       github: rock-core/tools-metaruby
+      branch: $METARUBY_BRANCH
     - (ocl|log4cpp):
       branch: master
 
