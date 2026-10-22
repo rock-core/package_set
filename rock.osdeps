@@ -421,3 +421,10 @@ gtk4-webkit-ruby:
         - webkit-gtk
         osdep:
         - gtk4-ruby
+
+sequel-sqlite:
+    gem:
+    - sequel
+    - sqlite3-ruby
+    ubuntu:
+    - libsqlite3-dev
