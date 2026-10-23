@@ -167,7 +167,10 @@ qt5-opengl:
     #arch: qt5
 
 qt4-webkit:
-    debian,ubuntu: libqtwebkit-dev
+    debian: libqtwebkit-dev
+    ubuntu:
+        "18.04,20.04": libqtwebkit-dev
+        default: nonexistent
     fedora,opensuse: qt-devel
     macos-brew: qt4
     macos-port: qt4-mac
