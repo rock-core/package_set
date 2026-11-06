@@ -1,6 +1,13 @@
 # IMPORTANT: new packages must be added at the top of this file
 # They must NEVER be added to other files
 
+if Autoproj.workspace.os_package_resolver.availability_of("qt4-webkit") != Autoproj::OSPackageResolver::AVAILABLE
+    Autoproj.config.set("METARUBY_BRANCH", "no_webview")
+else
+    Autoproj.config.set("METARUBY_BRANCH", "master")
+end
+
+
 import_package 'tools/apaka-rock_patches'
 remove_from_default 'tools/apaka-rock_patches'
 ruby_package 'tools/apaka'
