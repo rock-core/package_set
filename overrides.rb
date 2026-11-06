@@ -1,5 +1,10 @@
 Rock.flavors.finalize
 
+require File.join(__dir__, 'rock/python')
+if Autoproj.config.get "USE_PYTHON"
+    Rock.check_init_venv
+end
+
 Autoproj.env_add_path 'ROCK_BUNDLE_PATH', File.join(Autobuild.prefix, 'share', 'rock')
 Autoproj.env_add_path 'ROCK_BUNDLE_PATH', File.join(Autoproj.root_dir, 'bundles')
 
