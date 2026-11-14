@@ -1,8 +1,5 @@
 name: rock.core
 
-imports:
-    - github: orocos-toolchain/autoproj
-
 version_control:
     - base/.*:
       github: rock-core/base-$PACKAGE_BASENAME

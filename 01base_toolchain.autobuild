@@ -1,0 +1,127 @@
+configuration_option 'rtt_target', 'string',
+                     default: 'gnulinux',
+                     possible_values: %w[gnulinux xenomai macosx],
+                     doc: 'the target operating system for Orocos/RTT '\
+                          '(gnulinux, xenomai, or macosx)'
+
+configuration_option 'rtt_corba_implementation', 'string',
+                     default: 'omniorb',
+                     lowercase: true,
+                     possible_values: %w[none tao omniorb],
+                     doc: ['which CORBA implementation should the RTT use ?',
+                           'Answer "none" to disable CORBA, otherwise pick '\
+                           'either tao or omniorb']
+
+configuration_option 'USE_OCL', 'boolean',
+    default: 'no',
+    doc: [
+        "Do you need compatibility with OCL ? (yes or no)",
+        "New Rock users that don't need backward compatibility with legacy Orocos components",
+        "probably want to say 'no'. Otherwise, say 'yes'.",
+        "Saying 'yes' will significantly impact compilation time and the size of the resulting binaries",
+        "Please answer 'yes' or 'no'"
+    ]
+
+cmake_package 'tools/rtt' do |pkg|
+    pkg.always_reconfigure = true
+    pkg.doc_dir = File.join('doc', 'api', 'html')
+    pkg.with_doc('docapi')
+
+    target = Autoproj.config.get('rtt_target')
+    env_set 'OROCOS_TARGET', target
+    pkg.define 'OROCOS_TARGET', target
+
+    env_add 'CMAKE_PREFIX_PATH', pkg.prefix
+
+    # Used by the oroGen handler
+    pkg.provides "pkgconfig/orocos-rtt-#{target}"
+    Autoproj.config.get('rtt_corba_implementation')
+
+    # Disable building the test suite because it needs a lot of time and memory
+    pkg.with_tests("check")
+    pkg.test_utility.source_dir = File.join(pkg.srcdir, 'tests')
+    pkg.define 'BUILD_TESTING', pkg.test_utility.enabled?
+
+    corba = Autoproj.config.get('rtt_corba_implementation')
+    if corba == 'none'
+        Autobuild::Orogen.corba = false
+        pkg.define 'ENABLE_CORBA', 'OFF'
+    else
+        Autobuild::Orogen.corba = true
+        pkg.define 'ENABLE_CORBA', 'YES'
+        pkg.define 'CORBA_IMPLEMENTATION', corba.upcase
+        pkg.depends_on corba.downcase
+    end
+
+    pkg.define "DEFAULT_PLUGIN_PATH", "/"
+    pkg.post_import do
+        # There was a bug in RTT CMake code that generated the pluginpath.cpp file
+        # in the source directory. Delete that file so that the DEFAULT_PLUGIN_PATH
+        # change above is effective
+        FileUtils.rm_f File.join(pkg.srcdir, "rtt", "plugin", "pluginpath.cpp")
+    end
+    if Autoproj.config.get('USE_OCL')
+        pkg.define "PLUGINS_ENABLE_SCRIPTING", "ON"
+        pkg.define 'ORO_DISABLE_PORT_DATA_SCRIPTING', 'OFF'
+        Autobuild::Orogen.default_type_export_policy = 'all'
+    else
+        pkg.define "PLUGINS_ENABLE_SCRIPTING", "OFF"
+        pkg.define 'ORO_DISABLE_PORT_DATA_SCRIPTING', 'ON'
+        Autobuild::Orogen.default_type_export_policy = 'used'
+        Autobuild::Orogen.orogen_options << "--no-rtt-scripting"
+    end
+    pkg.disable_doc
+end
+
+ruby_package 'tools/metaruby'
+
+ruby_package 'tools/utilrb'
+cmake_package 'tools/utilmm' do |pkg|
+    pkg.doc_dir = File.join('doc', 'html')
+end
+remove_from_default 'tools/utilmm'
+
+cmake_package 'tools/typelib' do |pkg|
+    pkg.define 'RUBY_EXECUTABLE', Autoproj::CmdLine.ruby_executable
+    pkg.env_set 'TYPELIB_PLUGIN_PATH', File.join(pkg.prefix, 'lib', 'typelib')
+
+    # Enable the castxml importer by adding the following in autoproj/init.rb
+    #
+    #   Autoproj.config.set 'typelib_cxx_loader', 'castxml'
+    cxx_loader = Autoproj.config.get 'typelib_cxx_loader', 'gccxml'
+    pkg.define 'BUILD_CLANG_TLB_IMPORTER', (cxx_loader == 'clang')
+    pkg.env_set 'TYPELIB_CXX_LOADER', cxx_loader
+    pkg.define "BUILD_TESTS", pkg.test_utility.enabled?
+    pkg.post_import do
+        if cxx_loader == 'clang'
+            pkg.message '%s: using the clang importer'
+            pkg.depends_on 'clang-3.4'
+        elsif cxx_loader == 'castxml'
+            pkg.message '%s: using the castxml importer'
+            pkg.depends_on 'castxml'
+        else
+            pkg.message '%s: using the gccxml importer'
+            pkg.depends_on 'gccxml'
+        end
+    end
+end
+
+cmake_package 'tools/rtt_typelib'
+ruby_package 'tools/orogen'
+
+# Install the OCL only to get the task browser
+cmake_package 'tools/ocl' do |pkg|
+    pkg.always_reconfigure = true
+    pkg.doc_dir = File.join('doc', 'api', 'html')
+    pkg.with_doc('docapi')
+
+    target = Autoproj.config.get('rtt_target')
+    pkg.define 'OROCOS_TARGET', target
+end
+remove_from_default "tools/ocl"
+
+unless Autoproj.config.get('USE_OCL')
+    # OCL cannot be compiled without setting PLUGINS_ENABLE_SCRIPTING on RTT, therefore exclude it hard
+    Autoproj.manifest.add_exclusion("ocl","USE_OCL is set to false, OCL cannot compiled without this setting.")
+end
+
