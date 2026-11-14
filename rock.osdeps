@@ -429,5 +429,7 @@ sequel-sqlite:
     gem:
     - sequel
     - sqlite3-ruby
+    - name: sqlite3
+      version: "< 1.7.0"
     ubuntu:
     - libsqlite3-dev
