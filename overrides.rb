@@ -1,7 +1,8 @@
 Rock.flavors.finalize
 
 require File.join(__dir__, 'rock/python')
-if Autoproj.config.get "USE_PYTHON"
+# Newer autoproj versions create the venv themselves
+if !Autoproj::Python.respond_to?(:venv_enabled?) && Autoproj.config.get("USE_PYTHON")
     Rock.check_init_venv
 end
 

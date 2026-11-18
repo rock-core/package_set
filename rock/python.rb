@@ -1,5 +1,12 @@
 require 'open3'
 require 'rubygems'
+
+# Delegate to autoproj if it supports venvs itself
+if Autoproj::Python.respond_to?(:venv_enabled?)
+    require File.join(__dir__, 'python_autoproj')
+    return
+end
+
 # Usage:
 # In init.rb
 #      Rock.setup_python_configuration_options()

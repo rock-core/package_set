@@ -174,7 +174,14 @@ if Autobuild.macos?
     Autobuild::Orogen.transports.delete("mqueue")
 end
 
-if Autoproj.config.get "USE_PYTHON"
+if Autoproj::Python.respond_to?(:venv_enabled?)
+    # autoproj handles the python configuration, including the venv
+    Autoproj::Python.setup_python_configuration_options
+    if Autoproj.config.get("PYTHON_UPGRADE_PIP", false) && !Autoproj::Python.venv_enabled?
+        Autoproj.warn "PYTHON_UPGRADE_PIP is not supported anymore, enable " \
+                      "USE_PYTHON_VENV with 'autoproj reconfigure' to get an up-to-date pip"
+    end
+elsif Autoproj.config.get "USE_PYTHON"
     Rock.setup_python_configuration_options
 
     if Autoproj.config.get "PYTHON_UPGRADE_PIP"
