@@ -174,7 +174,45 @@ if Autobuild.macos?
     Autobuild::Orogen.transports.delete("mqueue")
 end
 
-Rock.setup_python_configuration_options
+if Autoproj::Python.respond_to?(:venv_enabled?)
+    # autoproj handles the python configuration, including the venv
+    Autoproj::Python.setup_python_configuration_options
+    if Autoproj.config.get("PYTHON_UPGRADE_PIP", false) && !Autoproj::Python.venv_enabled?
+        Autoproj.warn "PYTHON_UPGRADE_PIP is not supported anymore, enable " \
+                      "USE_PYTHON_VENV with 'autoproj reconfigure' to get an up-to-date pip"
+    end
+elsif Autoproj.config.get "USE_PYTHON"
+    Rock.setup_python_configuration_options
+
+    if Autoproj.config.get "PYTHON_UPGRADE_PIP"
+        # Monkeypatch Pipmanager. This should be changed in Autoproj directly:
+        class Autoproj::PackageManagers::PipManager
+            def install(pips, filter_uptodate_packages: false, install_only: false)
+                guess_pip_program
+                pips = [pips] if pips.is_a?(String)
+
+                upgrade_cmdline = [Autobuild.tool("pip"), "install", "--user", "--upgrade", "pip"]
+                base_cmdline = [Autobuild.tool("pip"), "install", "--user"]
+
+                cmdlines = [upgrade_cmdline, base_cmdline + pips]
+
+                if pips_interaction(cmdlines)
+                    Autoproj.message "  installing/updating Python dependencies:" \
+                                     " #{pips.sort.join(', ')}"
+
+                    cmdlines.each do |c|
+                        Autobuild::Subprocess.run "autoproj", "osdeps", *c,
+                                                  env: ws.env.resolved_env
+                    end
+
+                    pips.each do |p|
+                        @installed_pips << p
+                    end
+                end
+            end
+        end
+    end
+end
 
 Autoproj.config.declare 'syskit_use_bundles', 'boolean',
     default: true,
